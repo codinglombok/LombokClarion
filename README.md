@@ -4,7 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
 [![npm downloads](https://img.shields.io/npm/dm/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
 [![jsDelivr hits](https://img.shields.io/jsdelivr/npm/hm/lombokclarion.svg)](https://www.jsdelivr.com/package/npm/lombokclarion)
-[![license](https://img.shields.io/npm/l/lombokclarion.svg)](LICENSE)
+[![license]([https://img.shields.io/npm/l/lombokclarion.svg)](LICENSE](https://github.com/codinglombok/LombokClarion/blob/main/LICENSE))
 
 An implementation of the LombokClarion framework as : explicit-over-magic, edge/serverless-first,
 PHP 8.3+, no facades, no auto-discovery, domain layer with zero framework
