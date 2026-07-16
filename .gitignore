@@ -1,0 +1,4 @@
+/storage/*.sqlite
+/storage/*.compiled.php
+/vendor/
+.env

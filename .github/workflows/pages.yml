@@ -1,0 +1,45 @@
+name: Deploy docs to GitHub Pages
+on:
+  push: { branches: [main], paths: ['docs/**', 'README.md', '.github/workflows/pages.yml'] }
+  workflow_dispatch: {}
+permissions: { contents: read, pages: write, id-token: write }
+concurrency: { group: pages, cancel-in-progress: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build static site from Markdown docs
+        run: |
+          pip install markdown --quiet
+          python3 - << 'PYEOF'
+          import markdown, pathlib, html
+          out = pathlib.Path('_site'); out.mkdir(exist_ok=True)
+          tpl = '<!doctype html><html data-style="resonant-stark"><head><meta charset="utf-8">' \
+                '<meta name="viewport" content="width=device-width,initial-scale=1">' \
+                '<title>{t} — LombokClarion</title><style>body{{max-width:860px;margin:2rem auto;' \
+                'padding:0 1rem;font:16px/1.6 system-ui}}pre{{background:#f4f4f4;padding:1rem;' \
+                'overflow:auto}}code{{background:#f4f4f4}}table{{border-collapse:collapse}}' \
+                'td,th{{border:1px solid #ccc;padding:.4rem}}nav a{{margin-right:1rem}}</style></head>' \
+                '<body><nav><a href="index.html">Home</a><a href="DEPLOYMENT.html">Deploy</a>' \
+                '<a href="AUDIT-TRAIL.html">Audit Trail</a><a href="PROJECT-SUMMARY.html">Summary</a></nav>{b}</body></html>'
+          pages = {'index': 'README.md'}
+          for f in pathlib.Path('docs').glob('*.md'):
+              pages[f.stem] = str(f)
+          for name, src in pages.items():
+              body = markdown.markdown(open(src, encoding='utf-8').read(),
+                                       extensions=['tables', 'fenced_code'])
+              (out / f'{name}.html').write_text(tpl.format(t=html.escape(name), b=body), encoding='utf-8')
+          print('built', len(pages), 'pages')
+          PYEOF
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

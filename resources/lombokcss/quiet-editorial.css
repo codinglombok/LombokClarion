@@ -1,0 +1,41 @@
+/* ==========================================================================
+   LombokClarion starter-kit — quiet-editorial theme extension for LombokCSS
+   --------------------------------------------------------------------------
+   The upstream library (github.com/codinglombok/LombokCSS) ships:
+   modern-corporate-flat, resonant-stark, neo-brutalism, glassmorphism,
+   semantic-minimalist. The LombokClarion spec (§8/§13) additionally names
+   `quiet-editorial`, which upstream does not define — so it is authored
+   here as a preset extension following upstream's own rule from
+   src/themes.css: "Each preset ONLY re-maps tokens; component structure
+   never changes." Loads after lombok.min.css.
+
+   Feel: print magazine — warm paper, ink text, serif display, hairline
+   borders, almost no shadow, restrained oxblood accent.
+   ========================================================================== */
+[data-style="quiet-editorial"] {
+  color-scheme: light;
+  --lc-bg:#faf7f2;
+  --lc-surface:#fffdf9;
+  --lc-surface-2:#f3efe7;
+  --lc-text:#1c1a17;
+  --lc-text-muted:#57534c;
+  --lc-text-faint:#8a857c;
+  --lc-border:#e5dfd3;
+  --lc-border-strong:#cfc7b8;
+  --lc-accent:#8c2f39; --lc-accent-hover:#7a2832; --lc-accent-active:#68222b;
+  --lc-accent-text:#ffffff; --lc-accent-soft:#f4e4e6; --lc-accent-soft-text:#8c2f39;
+  --lc-ring:rgba(140,47,57,.35);
+  --lc-success-soft:#e9f2e6; --lc-success-text:#3f6f3a;
+  --lc-warning-soft:#f7eeda; --lc-warning-text:#8a6414;
+  --lc-danger-soft:#f6e3e3;  --lc-danger-text:#9c2b2b;
+  --lc-info-soft:#e6eef2;    --lc-info-text:#2f6579;
+  --lc-radius-sm:2px; --lc-radius:3px; --lc-radius-lg:6px;
+  --lc-border-width:1px;
+  --lc-shadow-sm:none;
+  --lc-shadow:0 1px 3px rgba(28,26,23,.07);
+  --lc-shadow-lg:0 6px 22px rgba(28,26,23,.09);
+  --lc-shadow-hard:none; --lc-blur:none;
+  --lc-font-display:Georgia, "Times New Roman", Times, serif;
+  --lc-tracking:0;
+  --lc-weight-semibold:600;
+}

@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.min.css -diff
+*.min.js -diff
+/tests export-ignore
+/docs export-ignore

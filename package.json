@@ -1,0 +1,36 @@
+{
+  "name": "lombokclarion",
+  "version": "1.0.0",
+  "description": "Frontend asset tooling for LombokClarion (PHP framework). CSS/JS are vendored under resources/ and content-hashed by `php bin/lombokclarion optimize` \u2014 npm is only used to refresh the vendored dist files.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codinglombok/lombokclarion"
+  },
+  "devDependencies": {
+    "lombok-charts": "^0.1.0"
+  },
+  "scripts": {
+    "assets:update:charts": "cp node_modules/lombok-charts/dist/lombok-charts.umd.min.js resources/lombokcharts/",
+    "assets:update:css": "curl -sL https://raw.githubusercontent.com/codinglombok/LombokCSS/main/dist/lombok.min.css -o resources/lombokcss/lombok.min.css",
+    "assets:update": "npm run assets:update:charts && npm run assets:update:css",
+    "test": "php tests/run-all.php"
+  },
+  "files": [
+    "resources/",
+    "bin/",
+    "packages/",
+    "bootstrap/",
+    "public/index.php",
+    "autoload.php",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "php",
+    "framework",
+    "lombokclarion",
+    "explicit",
+    "serverless"
+  ]
+}

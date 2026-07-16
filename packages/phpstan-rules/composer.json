@@ -1,0 +1,9 @@
+{
+    "name": "lombokclarion/phpstan-rules",
+    "description": "PHPStan extension distributing LombokClarion's audit rules (§7): no interpolated/concatenated SQL into PDO query/prepare/exec, and no LombokClarion imports inside app/Domain.",
+    "type": "phpstan-extension",
+    "license": "MIT",
+    "require": { "php": ">=8.3", "phpstan/phpstan": "^1.11 || ^2.0" },
+    "autoload": { "psr-4": { "LombokClarion\\PHPStanRules\\": "src/" } },
+    "extra": { "phpstan": { "includes": ["extension.neon"] } }
+}

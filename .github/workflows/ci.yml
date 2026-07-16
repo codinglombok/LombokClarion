@@ -1,0 +1,19 @@
+name: CI
+on: { push: { branches: [main] }, pull_request: {} }
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3', extensions: pdo_sqlite, openssl }
+      - name: Test suite (122+)
+        run: php tests/run-all.php
+      - name: Domain boundary (Deptrac-equivalent)
+        run: php bin/check-domain-boundary.php
+      - name: Build artifacts (optimize)
+        run: php bin/lombokclarion migrate && php bin/lombokclarion optimize
+      - name: Security & SQL audits
+        run: |
+          php bin/lombokclarion audit:security
+          php bin/lombokclarion audit:sql app --explain

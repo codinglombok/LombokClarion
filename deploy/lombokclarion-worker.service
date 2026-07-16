@@ -1,0 +1,15 @@
+# /etc/systemd/system/lombokclarion-worker.service
+[Unit]
+Description=LombokClarion queue worker
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/var/www/lombokclarion
+ExecStart=/usr/bin/php bin/lombokclarion work --loop --sleep=2
+Restart=always
+RestartSec=3
+EnvironmentFile=/var/www/lombokclarion/.env
+
+[Install]
+WantedBy=multi-user.target

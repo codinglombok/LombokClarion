@@ -1,0 +1,5 @@
+# Auto-included via phpstan/extension-installer, or add manually:
+#   includes: [vendor/lombokclarion/phpstan-rules/extension.neon]
+rules:
+    - LombokClarion\PHPStanRules\NoRawSqlValuesRule
+    - LombokClarion\PHPStanRules\DomainBoundaryRule
