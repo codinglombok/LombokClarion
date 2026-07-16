@@ -1,5 +1,10 @@
 # LombokClarion
 
+[![CI](https://github.com/codinglombok/lombokclarion/actions/workflows/ci.yml/badge.svg)](https://github.com/codinglombok/lombokclarion/actions/workflows/ci.yml)
+[![Deploy docs](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml/badge.svg)](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml)
+[![npm version](https://img.shields.io/npm/v/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
+[![npm downloads](https://img.shields.io/npm/dm/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
+[![jsDelivr hits](https://img.shields.io/jsdelivr/npm/hm/lombokclarion.svg)](https://www.jsdelivr.com/package/npm/lombokclarion)
 
 [![License](https://img.shields.io/github/license/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/blob/main/LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/codinglombok/LombokClarion/CI.yml?branch=main)](https://github.com/codinglombok/LombokClarion/actions)  <!-- replace CI.yml with your workflow filename -->
@@ -10,12 +15,6 @@
 [![Top language](https://img.shields.io/github/languages/top/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/search?l=)
 [![Last commit](https://img.shields.io/github/last-commit/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/commits)
 
-[![CI](https://github.com/codinglombok/lombokclarion/actions/workflows/ci.yml/badge.svg)](https://github.com/codinglombok/lombokclarion/actions/workflows/ci.yml)
-[![Deploy docs](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml/badge.svg)](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml)
-[![npm version](https://img.shields.io/npm/v/lombokclarion.svg)]
-(https://www.npmjs.com/package/lombokclarion)
-[![npm downloads](https://img.shields.io/npm/dm/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
-[![jsDelivr hits](https://img.shields.io/jsdelivr/npm/hm/lombokclarion.svg)](https://www.jsdelivr.com/package/npm/lombokclarion)
 
 An implementation of the LombokClarion framework as : explicit-over-magic, edge/serverless-first,
 PHP 8.3+, no facades, no auto-discovery, domain layer with zero framework
