@@ -32,7 +32,7 @@ jobs:
               (out / f'{name}.html').write_text(tpl.format(t=html.escape(name), b=body), encoding='utf-8')
           print('built', len(pages), 'pages')
           PYEOF
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with: { path: _site }
   deploy:
     needs: build
