@@ -292,3 +292,9 @@ each is additive, not a rework of what exists:
 
 - A bundled PHPStan/Psalm ruleset distributing the audit rules as real
   extension packages (today: the TokenScanner static analyzer above).
+
+  Need help? See **[SUPPORT.md](SUPPORT.md)**.
+
+## License
+
+MIT.
