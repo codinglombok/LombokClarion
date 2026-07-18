@@ -1,0 +1,31 @@
+name: Auto Fix Formatting
+
+on:
+  push:
+    branches-ignore: [ main ] # Best to avoid direct auto-commits to main
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to allow the bot to commit changes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Formatter/Fixer
+        run: npm run format:fix # e.g., prettier --write .
+
+      - name: Commit fixes
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "style: automated code formatting fixes"
