@@ -4,10 +4,8 @@
 [![Deploy docs](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml/badge.svg)](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml)
 [![npm version](https://img.shields.io/npm/v/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
 [![npm downloads](https://img.shields.io/npm/dm/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
-[![jsDelivr hits](https://img.shields.io/jsdelivr/npm/hm/lombokclarion.svg)](https://www.jsdelivr.com/package/npm/lombokclarion)
 
 [![License](https://img.shields.io/github/license/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/blob/main/LICENSE)
-[![CI](https://img.shields.io/github/actions/workflow/status/codinglombok/LombokClarion/CI.yml?branch=main)](https://github.com/codinglombok/LombokClarion/actions)  <!-- replace CI.yml with your workflow filename -->
 [![Release](https://img.shields.io/github/v/release/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/releases)
 [![GitHub stars](https://img.shields.io/github/stars/codinglombok/LombokClarion?style=social)](https://github.com/codinglombok/LombokClarion/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/codinglombok/LombokClarion?style=social)](https://github.com/codinglombok/LombokClarion/network/members)
