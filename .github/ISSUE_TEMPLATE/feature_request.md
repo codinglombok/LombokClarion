@@ -3,6 +3,7 @@ name: Feature request
 about: Propose an addition
 labels: enhancement
 ---
+
 **Problem / use case**
 
 **Proposed API** (remember: explicit over magic — no auto-discovery, no statics in core)

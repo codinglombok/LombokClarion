@@ -1,7 +1,8 @@
 # Changelog
 
 ## 1.0.0
-Built in 7 staged passes 
+
+Built in 7 staged passes
 
 - **Stage 1** — Core: Container (+AOT compiler → zero-reflection CompiledContainer),
   Http, Routing (+Fpm/Function/Swoole adapters), Bus, Config compiler, Persistence
