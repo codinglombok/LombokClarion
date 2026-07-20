@@ -13,7 +13,6 @@
 [![Top language](https://img.shields.io/github/languages/top/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/search?l=)
 [![Last commit](https://img.shields.io/github/last-commit/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/commits)
 
-
 An implementation of the LombokClarion framework as : explicit-over-magic, edge/serverless-first,
 PHP 8.3+, no facades, no auto-discovery, domain layer with zero framework
 imports.
@@ -34,7 +33,6 @@ CRUD-ish feature) wiring all of it together. It is not a drop-in
 `composer create-project` package yet — see "What's not here yet" below —
 but every piece that exists actually runs, and is covered by tests that
 actually run (124 tests, 0 failures, see "Running the tests").
-
 
 ## Layout
 
@@ -117,34 +115,34 @@ curl -X POST localhost:8080/api/widgets -d name=Lamp -d price_cents=1500
 
 ## What each design maps to
 
-| Section | Requirement | Where |
-|----|---|---|
-| 2.1-2.6 | No facades/statics/auto-discovery, explicit config, magic opt-in | Every package - no `Facade` class exists anywhere; every binding is in `bootstrap/services.php` |
-| 3 | Container to Router to Middleware to Container to Controller to Bus to Domain to Repository flow | `packages/routing/src/Kernel.php` |
-| 3 | Domain layer zero framework imports, CI-enforced | `app/Domain/Widget/*` + `bin/check-domain-boundary.php` (passing; verified it also *fails* on a deliberately-introduced violation) |
-| 4.1 | Container: explicit binding, no reflection auto-wiring of *interfaces* | `packages/container/src/Container.php` |
-| 4.2 | Http: Request/Response value objects | `packages/http/src/Request.php`, `Response.php` |
-| 4.3 | Routing: route table, middleware composition, groups | `packages/routing/src/Router.php`, `Route.php`, `Kernel.php` |
-| 4.4 | Bus: Command/Query/EventBus, explicit registration | `packages/bus/src/*` |
-| 4.5 | Config: typed, schema-generated | `packages/config/src/ConfigCompiler.php` - `$config->mail->smtp->host` as real typed property access, not `config('a.b.c')` |
-| 4.6 | Kernel + FpmAdapter, FunctionAdapter, SwooleAdapter | `packages/routing/src/Adapters/*` |
-| 4.7 | Persistence: bound-params-only QueryBuilder, SchemaBuilder, migration runner reading an explicit manifest | `packages/persistence/src/*` |
-| 4.8 | View: Blade-like compiler, auto-escaping by default, compiled/cached ahead of time | `packages/view/src/*` |
-| 4.9 | Console: CLI kernel, same container as HTTP | `packages/console/src/*` |
-| 4.10 | Testing: HttpTestCase, fakes, InMemoryRepository, ColdStartTest | `packages/testing/src/*` |
-| 4.11 | Security package: Argon2id, CSRF, rate-limit, security headers, `Encrypted<T>` | `packages/security/src/*` |
-| 5 | Cold-start budget, compiled/reflection-free boot, no persistent-process assumptions | `ContainerCompiler` (AOT reflection) + `CompiledContainer` (zero reflection) + `ColdStartTest`; verified the compiled boot path actually serves a request correctly end-to-end |
-| 6 | Security requirements (hashing, CSRF, sessions, validation, rate limit, headers, encryption, `audit:security`) | `packages/security/*` + `AuditSecurityCommand` |
-| 7 | SQL/injection hardening, `audit:sql`, N+1 `with()`, MySQL non-transactional migrations | `QueryBuilder`/`Identifier`/`RawExpression` + `AuditSqlCommand` + `SchemaBuilder::migrationsAreTransactionalByDefault()` |
-| 9 | Domain tests need zero HTTP/DB; `HttpTestCase` boots the *real* container | `InMemoryRepository` + `HttpTestCase` |
-| 10 | No implicit retry on queued commands | `RetryPolicy::none()` is the only default; `RetriesQueuedCommand` is opt-in |
+| Section | Requirement                                                                                                    | Where                                                                                                                                                                          |
+| ------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2.1-2.6 | No facades/statics/auto-discovery, explicit config, magic opt-in                                               | Every package - no `Facade` class exists anywhere; every binding is in `bootstrap/services.php`                                                                                |
+| 3       | Container to Router to Middleware to Container to Controller to Bus to Domain to Repository flow               | `packages/routing/src/Kernel.php`                                                                                                                                              |
+| 3       | Domain layer zero framework imports, CI-enforced                                                               | `app/Domain/Widget/*` + `bin/check-domain-boundary.php` (passing; verified it also _fails_ on a deliberately-introduced violation)                                             |
+| 4.1     | Container: explicit binding, no reflection auto-wiring of _interfaces_                                         | `packages/container/src/Container.php`                                                                                                                                         |
+| 4.2     | Http: Request/Response value objects                                                                           | `packages/http/src/Request.php`, `Response.php`                                                                                                                                |
+| 4.3     | Routing: route table, middleware composition, groups                                                           | `packages/routing/src/Router.php`, `Route.php`, `Kernel.php`                                                                                                                   |
+| 4.4     | Bus: Command/Query/EventBus, explicit registration                                                             | `packages/bus/src/*`                                                                                                                                                           |
+| 4.5     | Config: typed, schema-generated                                                                                | `packages/config/src/ConfigCompiler.php` - `$config->mail->smtp->host` as real typed property access, not `config('a.b.c')`                                                    |
+| 4.6     | Kernel + FpmAdapter, FunctionAdapter, SwooleAdapter                                                            | `packages/routing/src/Adapters/*`                                                                                                                                              |
+| 4.7     | Persistence: bound-params-only QueryBuilder, SchemaBuilder, migration runner reading an explicit manifest      | `packages/persistence/src/*`                                                                                                                                                   |
+| 4.8     | View: Blade-like compiler, auto-escaping by default, compiled/cached ahead of time                             | `packages/view/src/*`                                                                                                                                                          |
+| 4.9     | Console: CLI kernel, same container as HTTP                                                                    | `packages/console/src/*`                                                                                                                                                       |
+| 4.10    | Testing: HttpTestCase, fakes, InMemoryRepository, ColdStartTest                                                | `packages/testing/src/*`                                                                                                                                                       |
+| 4.11    | Security package: Argon2id, CSRF, rate-limit, security headers, `Encrypted<T>`                                 | `packages/security/src/*`                                                                                                                                                      |
+| 5       | Cold-start budget, compiled/reflection-free boot, no persistent-process assumptions                            | `ContainerCompiler` (AOT reflection) + `CompiledContainer` (zero reflection) + `ColdStartTest`; verified the compiled boot path actually serves a request correctly end-to-end |
+| 6       | Security requirements (hashing, CSRF, sessions, validation, rate limit, headers, encryption, `audit:security`) | `packages/security/*` + `AuditSecurityCommand`                                                                                                                                 |
+| 7       | SQL/injection hardening, `audit:sql`, N+1 `with()`, MySQL non-transactional migrations                         | `QueryBuilder`/`Identifier`/`RawExpression` + `AuditSqlCommand` + `SchemaBuilder::migrationsAreTransactionalByDefault()`                                                       |
+| 9       | Domain tests need zero HTTP/DB; `HttpTestCase` boots the _real_ container                                      | `InMemoryRepository` + `HttpTestCase`                                                                                                                                          |
+| 10      | No implicit retry on queued commands                                                                           | `RetryPolicy::none()` is the only default; `RetriesQueuedCommand` is opt-in                                                                                                    |
 
 ## Known, deliberate limitations (documented, not bugs)
 
 - **`ContainerCompiler` can't see inside closures.** A binding registered
   as `[FactoryClass::class, 'method']` is compiled as a direct static call
   (zero reflection), but if that method internally does
-  `$c->get(SomethingElse::class)`, `SomethingElse` must *also* have its own
+  `$c->get(SomethingElse::class)`, `SomethingElse` must _also_ have its own
   explicit binding (or be listed in `extraRootIds`) or the compiled
   container won't know about it. This bit the example app during
   development (`CreateWidgetHandler`/`ListWidgetsHandler` are only
@@ -159,7 +157,7 @@ curl -X POST localhost:8080/api/widgets -d name=Lamp -d price_cents=1500
   assumed) and calls `CompiledContainer::instance(PDO::class, $pdo)` before
   handling the request.
 - **`audit:sql`/`audit:security` are real, working, regex-based
-  heuristics**, not the full bundled PHPStan/Psalm ruleset describes. 
+  heuristics**, not the full bundled PHPStan/Psalm ruleset describes.
   They catch the concrete cases named in §6/§7 (string-
   concatenated `query()`/`prepare()` calls, unmarked `{!! !!}` output,
   missing CSRF/security-headers middleware, `APP_DEBUG=true` in
@@ -176,8 +174,8 @@ curl -X POST localhost:8080/api/widgets -d name=Lamp -d price_cents=1500
 - **Reality check :** the actual library's vocabulary is
   plain component classes (`.btn`, `.card`, `.navbar`, `.table`) with `--lc-*`
   design tokens and `data-style`/`data-theme` attributes — **not** the `lc-*`
-  class prefix or `data-variant`/`data-elevation` attributes 
-  guessed. The starter views follow the *actual* vocabulary, which honors the
+  class prefix or `data-variant`/`data-elevation` attributes
+  guessed. The starter views follow the _actual_ vocabulary, which honors the
   spec's real rule ("use LombokCSS's own vocabulary exclusively").
 - Upstream ships resonant-stark, neo-brutalism, glassmorphism (plus
   modern-corporate-flat, semantic-minimalist) but **not** `quiet-editorial` —
@@ -222,6 +220,7 @@ each is additive, not a rework of what exists:
 - Wired through `ModelQueryBuilder::with()` (ActiveRecord) and directly
   usable from explicit repositories via `EagerLoader::load()`.
 - 5 dedicated tests covering all relation types + edge cases.
+
 ## Multi-tenancy (§11) — now implemented
 
 - Tenancy is a **request-scoped container binding pattern**, not a framework
@@ -267,8 +266,6 @@ each is additive, not a rework of what exists:
 - 4 new tests covering inner join, left join (null-match rows present),
   groupBy aggregate, and invalid-identifier rejection.
 
-
-
 ## audit:sql upgraded: token-based scanner + --explain (§7)
 
 - `TokenScanner` replaces the regex heuristics with PHP-tokenizer-based
@@ -288,8 +285,8 @@ each is additive, not a rework of what exists:
 ## Plugin system (§10) — now implemented
 
 - `Plugin` interface: name() + capabilities() (['bindings','routes','commands'])
-  + register(Container). Registration is always explicit in services.php —
-  no composer-extra scanning, no vendor sweep, no self-registration.
+  - register(Container). Registration is always explicit in services.php —
+    no composer-extra scanning, no vendor sweep, no self-registration.
 - `PluginRegistrar` enforces an optional capability allow-list, so an app
   can declare in code "plugins may add bindings but never routes";
   violations fail loudly at registration. Duplicate registration throws.
