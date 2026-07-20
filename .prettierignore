@@ -6,6 +6,7 @@ dist/
 docs/
 dist/
 assets/
+scripts/
 *.json
 *.log
 *.config
