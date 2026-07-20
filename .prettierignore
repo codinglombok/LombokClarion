@@ -1,0 +1,26 @@
+# generated output — do not format
+node_modules/
+dist/
+.git/
+.github/
+docs/
+dist/
+assets/
+*.json
+*.log
+*.config
+.DS_Store
+.vscode/
+coverage/
+_site/
+.release/
+examples/
+tests/
+docs/
+*.config.js
+build.js
+.eslintrc.json
+jsconfig.json
+# playwright artifacts (baselines under tests/**-snapshots ARE committed)
+test-results/
+playwright-report/
