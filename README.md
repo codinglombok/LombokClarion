@@ -4,6 +4,7 @@
 [![Deploy docs](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml/badge.svg)](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml)
 [![npm version](https://img.shields.io/npm/v/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
 [![npm downloads](https://img.shields.io/npm/dm/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
+[![](https://data.jsdelivr.com/v1/package/npm/lombokclarion/badge)](https://www.jsdelivr.com/package/npm/lombokclarion)
 
 [![License](https://img.shields.io/github/license/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/blob/main/LICENSE)
 [![Release](https://img.shields.io/github/v/release/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/releases)
