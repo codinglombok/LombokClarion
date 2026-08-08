@@ -90,7 +90,7 @@ jobs:
             echo "::group::${pkg}"
 
             # Clean up any leftover branch from a previous iteration
-            git branch -D "$BRANCH" 2>/dev/null || true
+            git branch -D "$BRANCH"  || true
 
             # Subtree split
             if ! git subtree split --prefix="$PREFIX" -b "$BRANCH" >/dev/null 2>&1; then
@@ -104,7 +104,7 @@ jobs:
             if ! git push --force "$REMOTE" "${BRANCH}:main"; then
               echo "::error::push failed for ${pkg}"
               FAILED+=("$pkg")
-              git branch -D "$BRANCH" 2>/dev/null || true
+              git branch -D "$BRANCH"  || true
               echo "::endgroup::"
               continue
             fi
@@ -121,7 +121,7 @@ jobs:
               git tag -d "$TAG" >/dev/null 2>&1 || true
             fi
 
-            git branch -D "$BRANCH" 2>/dev/null || true
+            git branch -D "$BRANCH"  || true
             echo "${pkg}: OK"
             echo "::endgroup::"
           done
