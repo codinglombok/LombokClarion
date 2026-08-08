@@ -40,7 +40,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-          
+
       - name: Configure git for push
         run: |
           git config user.name "lombokclarion-bot"
@@ -91,7 +91,7 @@ jobs:
             echo "::group::${pkg}"
 
             # Clean up any leftover branch from a previous iteration
-            git branch -D "$BRANCH"  || true
+            git branch -D "$BRANCH" 2>/dev/null || true
 
             # Subtree split
             if ! git subtree split --prefix="$PREFIX" -b "$BRANCH" >/dev/null 2>&1; then
@@ -102,10 +102,10 @@ jobs:
             fi
 
             # Force-push branch to mirror's main
-            if ! git push --force "$REMOTE" "${BRANCH}:main"; then
+            if ! git push --force "$REMOTE" "${BRANCH}:main" 2>/dev/null; then
               echo "::error::push failed for ${pkg}"
               FAILED+=("$pkg")
-              git branch -D "$BRANCH"  || true
+              git branch -D "$BRANCH" 2>/dev/null || true
               echo "::endgroup::"
               continue
             fi
@@ -115,14 +115,14 @@ jobs:
               # Create a tag on the split branch pointing to its HEAD
               SPLIT_SHA=$(git rev-parse "$BRANCH")
               git tag -f "$TAG" "$SPLIT_SHA" >/dev/null 2>&1
-              if ! git push --force "$REMOTE" "refs/tags/${TAG}"; then
+              if ! git push --force "$REMOTE" "refs/tags/${TAG}" 2>/dev/null; then
                 echo "::warning::tag push failed for ${pkg} (branch push succeeded)"
               fi
               # Remove the temporary tag so it doesn't interfere with the next package
               git tag -d "$TAG" >/dev/null 2>&1 || true
             fi
 
-            git branch -D "$BRANCH"  || true
+            git branch -D "$BRANCH" 2>/dev/null || true
             echo "${pkg}: OK"
             echo "::endgroup::"
           done
