@@ -40,7 +40,12 @@ final class RateLimit implements Middleware
 
     public function handle(Request $request, callable $next): Response
     {
-        $identity = $request->header('x-forwarded-for') ?? 'unknown';
+        // U-S2-2 side note: identity is the peer address the runtime saw, not
+        // `X-Forwarded-For` — that header is client-supplied, and keying the
+        // limiter on it let any client mint fresh buckets (or exhaust someone
+        // else's) by forging the header. The old header value is kept only as
+        // a fallback for hand-built test Requests that set it and no ip.
+        $identity = $request->ip() ?? $request->header('x-forwarded-for') ?? 'unknown';
         $key = $identity . '|' . $request->method . '|' . $request->path;
 
         $count = $this->store->increment($key, $this->windowSeconds);

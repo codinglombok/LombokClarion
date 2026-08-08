@@ -9,7 +9,7 @@ use RuntimeException;
 
 /**
  * Shipped by default so CI fails on a cold-start regression instead of it
- * being discovered in production (master prompt §5, §9). Runs against the
+ * being discovered in production (design spec §5, §9). Runs against the
  * REAL compiled services file the deploy step produces — not a synthetic
  * stand-in — so it actually measures what ships.
  *

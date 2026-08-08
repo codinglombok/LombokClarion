@@ -2,7 +2,7 @@
     "name": "lombokclarion/security",
     "description": "Official, non-core security package: Argon2id hashing, stateless CSRF, RateLimit, SecurityHeaders, Encrypted<T> field wrapper, and FormRequest validation.",
     "type": "library",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
         "php": ">=8.3",
         "ext-openssl": "*",
@@ -11,6 +11,11 @@
     "autoload": {
         "psr-4": {
             "LombokClarion\\Security\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
         }
     }
 }

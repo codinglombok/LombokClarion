@@ -24,6 +24,12 @@ spl_autoload_register(function (string $class): void {
         'LombokClarion\\Security\\'  => __DIR__ . '/packages/security/src/',
         'LombokClarion\\ActiveRecord\\' => __DIR__ . '/packages/active-record/src/',
         'LombokClarion\\Facades\\'  => __DIR__ . '/packages/facades/src/',
+        'LombokClarion\\I18n\\'  => __DIR__ . '/packages/i18n/src/',
+        'LombokClarion\\Auth\\'  => __DIR__ . '/packages/auth/src/',
+        'LombokClarion\\LaravelFlavor\\' => __DIR__ . '/packages/laravel-flavor/src/',
+        'LombokClarion\\Validation\\' => __DIR__ . '/packages/validation/src/',
+        'LombokClarion\\Storage\\'   => __DIR__ . '/packages/storage/src/',
+        'LombokClarion\\Log\\'       => __DIR__ . '/packages/log/src/',
         'App\\'                      => __DIR__ . '/app/',
     ];
 

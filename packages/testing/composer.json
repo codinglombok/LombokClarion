@@ -2,7 +2,7 @@
     "name": "lombokclarion/testing",
     "description": "Test helpers for LombokClarion: InMemoryRepository, FakeCommandBus/FakeEventBus, HttpTestCase, ConsoleTestCase, and the ColdStartTest budget check.",
     "type": "library",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
         "php": ">=8.3",
         "lombokclarion/container": "*",
@@ -14,6 +14,11 @@
     "autoload": {
         "psr-4": {
             "LombokClarion\\Testing\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
         }
     }
 }

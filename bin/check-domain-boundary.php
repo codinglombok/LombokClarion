@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Enforces master prompt §3's hard rule: app/Domain/** may import only
+ * Enforces design spec §3's hard rule: app/Domain/** may import only
  * plain PHP/stdlib and other app/Domain/** classes, never LombokClarion\*.
  *
  * Additionally enforces §4.12's `forbidden-layers` metadata from optional

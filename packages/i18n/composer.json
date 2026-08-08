@@ -1,0 +1,20 @@
+{
+    "name": "lombokclarion/i18n",
+    "description": "Explicit internationalization for LombokClarion: locale catalogs are plain PHP files listed in a manifest, never directory-scanned. Parameter interpolation, count-based pluralization, fallback locale.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/http": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\I18n\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
+        }
+    }
+}

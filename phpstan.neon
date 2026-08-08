@@ -1,0 +1,63 @@
+# Static-analysis gate for the framework itself.
+#
+# Downstream apps do not need this file: installing lombokclarion/phpstan-rules
+# pulls extension.neon in via phpstan/extension-installer. This config exists so
+# the framework runs its own rules against its own source.
+#
+#   vendor/bin/phpstan analyse
+#
+# The rules are the AST siblings of `lombokclarion audit:sql`. Keep the two in
+# step: a finding one engine reports and the other does not is a bug in one of
+# them, not a difference of opinion.
+parameters:
+    # Level 5. The gate still exists for the two LombokClarion rules below (§3,
+    # §7), but the generic level now backs them up to catch what those rules do
+    # not: unhandled match arms, wrong static return covariance, dead code.
+    #
+    # It was level 0 for a long time because raising it surfaced a backlog. That
+    # backlog was worked off rather than deferred: the genuine defects were fixed
+    # (ConfigCompiler match default, the @extends docblock parse error, a variadic
+    # @param, static:: vs self:: on a private method, a write-only property), and
+    # the handful of intentional constructs that PHPStan's stubs misread carry a
+    # sited `@phpstan-ignore` with the reason, not a blanket suppression.
+    #
+    # Level 6 is deliberately not taken: it is a much larger annotation project
+    # (missing iterable value types), not a correctness backlog — a separate job.
+    level: 5
+
+    # PHPDoc types are a promise, not an enforcement. This framework validates
+    # untrusted input at its boundaries precisely because a caller can ignore a
+    # type hint, so its defensive runtime checks (is_string(), instanceof, a
+    # class-string that might not autoload) are intentional, not redundant.
+    # Treating PHPDoc types as certain would flag every one of those guards as
+    # dead. False keeps the guards and keeps the level honest.
+    treatPhpDocTypesAsCertain: false
+    paths:
+        - app
+        - packages
+        - bootstrap
+        # U-S1-1: the front controller wires instance middleware into the
+        # Kernel; leaving public/ unanalysed is how the too-narrow middleware
+        # docblocks stayed invisible to the framework's own gate.
+        - public
+    excludePaths:
+        analyseAndScan:
+            - packages/*/vendor
+    ignoreErrors:
+        # The trusted SQL kernel. QueryBuilder is the one place in the codebase
+        # that assembles SQL as a matter of design: identifiers go through
+        # Identifier::validate()/quote() and every value is a `?` bound at
+        # execute() time. Neither engine can prove that — the strings pass
+        # through implode()/sprintf() over arrays, which defeats both constant
+        # folding and token inspection.
+        #
+        # This is an exemption, not a clean bill of health. What stands in for
+        # the gate here is PersistenceTest (identifier rejection, bound-value
+        # round-trips, and a live `Robert'); DROP TABLE--` payload). If you
+        # change QueryBuilder, those tests are the review.
+        -
+            identifier: lombokclarion.rawSqlValue
+            path: packages/persistence/src/QueryBuilder.php
+
+includes:
+    - packages/phpstan-rules/extension.neon

@@ -7,8 +7,10 @@ namespace LombokClarion\Http;
 /**
  * Request-scoped data (authenticated user, tenant, correlation id, ...)
  * flows through this explicit, injectable object — never through statics.
- * A new RequestContext is created per request and bound into the container
- * as an instance for that request's lifetime (see Kernel::handle()).
+ * A new RequestContext is created per request and bound into the container as
+ * an instance for that request's lifetime by Kernel::handle() — every reader in
+ * that request (Authenticate, the tenant resolver, i18n) then resolves the same
+ * object rather than a fresh empty one.
  */
 final class RequestContext
 {

@@ -8,7 +8,6 @@ Supporting files already in the repo:
 `.dockerignore` · `.env.example`.
 
 **Cross-target principles (from spec §5–§8):**
-
 1. `php bin/lombokclarion optimize` runs AT BUILD/deploy time — producing
    `storage/services.compiled.php`, `storage/config.compiled.php`, hashed
    `public/assets/*` + manifest. Never commit these artifacts; regenerate each deploy.
@@ -18,6 +17,39 @@ Supporting files already in the repo:
    `Cache-Control: immutable` (nginx.conf already does this) —
    `StaticAssetsMiddleware` is a dev fallback only.
 4. Secrets (`APP_KEY`, DB credentials) via env/secret manager, never in the repo.
+   `APP_KEY` MUST be set in non-local environments: since #44 the app refuses to
+   boot with a missing/default/short key (generate: `openssl rand -hex 32`).
+5. First admin user (there is no register route by design):
+   `LOMBOKCLARION_PASSWORD='...' php bin/lombokclarion user:create admin@example.com`
+   — password via env, never argv (argv is visible in `ps` and shell history).
+
+## Local dev server (U-S1-6)
+The #44 guard treats a MISSING `APP_ENV` as production and refuses to boot —
+fail-safe, so a forgotten env file cannot silently run with the public dev key.
+That means a bare `php -S localhost:8000 -t public` greets every first-time
+consumer with a 500 and a remediation message. The intended dev invocation is:
+
+```sh
+APP_ENV=local APP_KEY=$(openssl rand -hex 32) php -S localhost:8000 -t public
+```
+
+(or copy `.env.example` to `.env` first — same effect, persists across runs).
+
+## Rollback runbook
+Order matters: **backup before migrate, every deploy**.
+1. Before `migrate`: copy the database (`cp storage/database.sqlite storage/backup-$(date +%s).sqlite`
+   for SQLite; `pg_dump`/`mysqldump` otherwise).
+2. Schema rollback: `php bin/lombokclarion migrate:rollback` (last one) or
+   `--steps=N` / `--connection=NAME`. This runs each migration's `down()`,
+   newest first, and un-records it — SCHEMA only: a `down()` that drops a
+   table drops its rows, which is what step 1 protects against.
+3. Code rollback: redeploy the previous artifact, then re-run
+   `php bin/lombokclarion optimize` — the compiled route index is
+   fingerprinted against the route table and will refuse to serve stale
+   (that refusal is a feature; the fix is re-running optimize, not deleting
+   the check).
+4. If a migration class was deleted between deploys, `migrate:rollback`
+   refuses (it will not guess) — restore from the step-1 backup instead.
 5. Sandbox note: this repo uses an `autoload.php` shim because the build environment
    had no Packagist access. In the real world: remove the shim, run
    `composer install --no-dev --optimize-autoloader`, change
@@ -27,13 +59,11 @@ Supporting files already in the repo:
 ---
 
 ## 1. GitHub
-
 ```bash
 cd lombokclarion
 git init && git add -A && git commit -m "LombokClarion v1"
 gh repo create youruser/lombokclarion --private --source=. --push
 ```
-
 CI (`.github/workflows/ci.yml`) automatically runs the full test suite, the
 domain-boundary check, `optimize`, `audit:security`, and `audit:sql --explain` —
 exactly the local quality gates. ColdStartTest is part of the suite, so a
@@ -44,7 +74,6 @@ cold-start regression fails CI (§5).
 `docs/**` or `README.md` rebuilds and deploys the static docs site.
 
 ## 2. VPS (Ubuntu 24.04 — nginx + PHP-FPM + systemd worker)
-
 ```bash
 sudo apt install -y nginx php8.3-fpm php8.3-sqlite3 php8.3-pgsql git
 sudo git clone https://github.com/youruser/lombokclarion /var/www/lombokclarion
@@ -59,26 +88,21 @@ sudo nginx -t && sudo systemctl reload nginx
 sudo cp deploy/lombokclarion-worker.service /etc/systemd/system/
 sudo systemctl daemon-reload && sudo systemctl enable --now lombokclarion-worker
 ```
-
 Redeploy = `git pull && php bin/lombokclarion migrate && php bin/lombokclarion
 optimize && systemctl restart php8.3-fpm lombokclarion-worker`. TLS: `certbot --nginx`.
 
 ## 3. Docker (local / any registry)
-
 ```bash
 export APP_KEY=$(openssl rand -hex 32) DB_PASSWORD=$(openssl rand -hex 16)
 docker compose up -d --build        # web :80, app (fpm), worker, postgres
 docker compose exec app php bin/lombokclarion migrate
 ```
-
 The `base` image runs `optimize` at build time (opcache `validate_timestamps=0` —
 immutable code, per §5). The `worker` target runs `work --loop`. Push:
 `docker build -t registry/you/lombokclarion:1.0 . && docker push ...`.
 
 ## 4. Google Cloud (Cloud Run — the most "serverless-first" aligned path)
-
 Cloud Run needs one HTTP-listening container; use the `cloudrun` stage:
-
 ```bash
 gcloud artifacts repositories create app --repository-format=docker --location=asia-southeast2
 gcloud builds submit --tag asia-southeast2-docker.pkg.dev/PROJECT/app/lombokclarion
@@ -88,7 +112,6 @@ gcloud run deploy lombokclarion \
   --set-secrets APP_KEY=app-key:latest \
   --set-env-vars APP_ENV=production,DB_DRIVER=pgsql
 ```
-
 DB: Cloud SQL Postgres + connection pooling is **mandatory** (PgBouncer/Cloud SQL
 connector) — spec §5 calls this a near-mandatory FaaS pairing. Worker: deploy the
 `worker` image as a scheduled Cloud Run **Job** (Cloud Scheduler → one-shot `work`
@@ -96,17 +119,14 @@ drain) or a min-instances=1 service for `--loop`.
 Migrations: a one-off Cloud Run Job running `php bin/lombokclarion migrate`.
 
 ## 5. AWS
-
 **Option A — ECS Fargate (most direct):** push the image to ECR; a task definition
 with two containers (nginx + FPM app sharing the `public/` volume) or the
 single-container `cloudrun` stage behind an ALB; a separate service for `worker`.
 RDS Postgres + RDS Proxy (pooling, §5).
-
 ```bash
 aws ecr create-repository --repository-name lombokclarion
 docker build -t ACCT.dkr.ecr.REGION.amazonaws.com/lombokclarion:1.0 . && docker push ...
 ```
-
 **Option B — Lambda (true edge/serverless):** use the Bref runtime
 (`bref/php-83-fpm`) with `public/index.php` as the handler; the existing
 `FunctionAdapter` was designed for exactly this — a thin per-provider shim
@@ -117,30 +137,26 @@ provides the seam) + an SQS-triggered Lambda worker.
 **Option C — EC2:** identical to the VPS section.
 
 ## 6. DigitalOcean
-
 **Droplet:** identical to the VPS section (Ubuntu). **App Platform (Dockerfile-based):**
-
 ```yaml
 # .do/app.yaml
 name: lombokclarion
 services:
   - name: web
-    dockerfile_path: Dockerfile # use the cloudrun stage (single HTTP container)
+    dockerfile_path: Dockerfile        # use the cloudrun stage (single HTTP container)
     http_port: 8080
     envs: [{ key: APP_KEY, type: SECRET }, { key: APP_ENV, value: production }]
 workers:
   - name: queue
-    dockerfile_path: Dockerfile # worker target
+    dockerfile_path: Dockerfile        # worker target
 databases: [{ name: db, engine: PG }]
 ```
-
 `doctl apps create --spec .do/app.yaml`. DO Managed Postgres ships built-in
 PgBouncer pooling — enable it (§5). Migrations via an App Platform job/console.
 
 ---
 
 ## Post-deploy checklist (every target)
-
 ```bash
 curl -I https://host/                    # 200 + SecurityHeaders (CSP/XFO/HSTS)
 curl -I https://host/assets/<hash>.css   # 200 + Cache-Control: immutable

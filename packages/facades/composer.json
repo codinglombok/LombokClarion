@@ -1,15 +1,22 @@
 {
     "name": "lombokclarion/facades",
-    "description": "Optional static-accessor facades for LombokClarion. Explicitly isolated from core and domain layer (§2.6, §4.12). MUST NOT leak into app/Domain/**.",
+    "description": "Optional static-accessor facades for LombokClarion. Explicitly isolated from core and domain layer (\u00a72.6, \u00a74.12). MUST NOT leak into app/Domain/**.",
     "type": "library",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
         "php": ">=8.3",
-        "lombokclarion/container": "*"
+        "lombokclarion/container": "*",
+        "lombokclarion/bus": "*",
+        "lombokclarion/security": "*"
     },
     "extra": {
         "lombokclarion": {
-            "forbidden-layers": ["app/Domain"]
+            "forbidden-layers": [
+                "app/Domain"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
         }
     },
     "autoload": {

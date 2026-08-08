@@ -2,11 +2,13 @@
     "name": "lombokclarion/app",
     "description": "LombokClarion application skeleton (framework monorepo + example app).",
     "type": "project",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
         "php": ">=8.3",
         "ext-pdo": "*",
         "ext-openssl": "*",
+        "ext-mbstring": "*",
+        "ext-fileinfo": "*",
         "lombokclarion/container": "*",
         "lombokclarion/http": "*",
         "lombokclarion/routing": "*",
@@ -15,22 +17,106 @@
         "lombokclarion/persistence": "*",
         "lombokclarion/view": "*",
         "lombokclarion/console": "*",
-        "lombokclarion/security": "*"
+        "lombokclarion/log": "*",
+        "lombokclarion/security": "*",
+        "lombokclarion/auth": "*",
+        "lombokclarion/laravel-flavor": "*",
+        "lombokclarion/validation": "*",
+        "lombokclarion/storage": "*"
     },
     "require-dev": {
-        "lombokclarion/testing": "*"
+        "lombokclarion/testing": "*",
+        "lombokclarion/active-record": "*",
+        "lombokclarion/facades": "*",
+        "lombokclarion/i18n": "*"
     },
     "repositories": [
-        { "type": "path", "url": "packages/container" },
-        { "type": "path", "url": "packages/http" },
-        { "type": "path", "url": "packages/routing" },
-        { "type": "path", "url": "packages/bus" },
-        { "type": "path", "url": "packages/config" },
-        { "type": "path", "url": "packages/persistence" },
-        { "type": "path", "url": "packages/view" },
-        { "type": "path", "url": "packages/console" },
-        { "type": "path", "url": "packages/security" },
-        { "type": "path", "url": "packages/testing" }
+        {
+            "type": "path",
+            "url": "packages/container"
+        },
+        {
+            "type": "path",
+            "url": "packages/http"
+        },
+        {
+            "type": "path",
+            "url": "packages/routing"
+        },
+        {
+            "type": "path",
+            "url": "packages/bus"
+        },
+        {
+            "type": "path",
+            "url": "packages/config"
+        },
+        {
+            "type": "path",
+            "url": "packages/persistence"
+        },
+        {
+            "type": "path",
+            "url": "packages/view"
+        },
+        {
+            "type": "path",
+            "url": "packages/console"
+        },
+        {
+            "type": "path",
+            "url": "packages/security"
+        },
+        {
+            "type": "path",
+            "url": "packages/testing"
+        },
+        {
+            "type": "path",
+            "url": "packages/active-record"
+        },
+        {
+            "type": "path",
+            "url": "packages/facades"
+        },
+        {
+            "type": "path",
+            "url": "packages/i18n"
+        },
+        {
+            "type": "path",
+            "url": "packages/phpstan-rules"
+        },
+        {
+            "type": "path",
+            "url": "packages/auth"
+        },
+        {
+            "type": "path",
+            "url": "packages/laravel-flavor",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/validation",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/storage"
+        },
+        {
+            "type": "path",
+            "url": "packages/framework"
+        },
+        {
+            "type": "path",
+            "url": "packages/log"
+        }
     ],
     "autoload": {
         "psr-4": {
@@ -38,5 +124,10 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "autoload-dev": {
+        "psr-4": {
+            "LombokClarion\\PHPStanRules\\": "packages/phpstan-rules/src/"
+        }
+    }
 }

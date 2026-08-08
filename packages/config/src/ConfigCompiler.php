@@ -174,6 +174,9 @@ final class ConfigCompiler
             'float' => (float) $raw,
             'bool' => is_bool($raw) ? $raw : in_array(strtolower((string) $raw), ['1', 'true', 'yes', 'on'], true),
             'array' => is_array($raw) ? $raw : (is_array($decoded = json_decode((string) $raw, true)) ? $decoded : []),
+            default => throw new \InvalidArgumentException(
+                "Unknown config cast type \"$type\". Declared types are string|int|float|bool|array."
+            ),
         };
     }
 

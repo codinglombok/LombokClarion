@@ -2,7 +2,7 @@
   "name": "lombokclarion",
   "version": "1.0.0",
   "description": "Frontend asset tooling for LombokClarion (PHP framework). CSS/JS are vendored under resources/ and content-hashed by `php bin/lombokclarion optimize` \u2014 npm is only used to refresh the vendored dist files.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/codinglombok/lombokclarion"

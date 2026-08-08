@@ -1,0 +1,134 @@
+# split.yml — Mirror monorepo packages to read-only satellite repos.
+#
+# Runs on:
+#   - push to main  → force-pushes each package's subtree to codinglombok/<pkg> main
+#   - new tag vX.Y.Z → same, plus pushes the tag to each mirror
+#
+# Requires:
+#   - Repository secret SPLIT_TOKEN: a GitHub PAT (classic) with `repo` scope
+#     owned by a machine user (or your own account) that has push access to all
+#     20 codinglombok/<pkg> mirror repos.
+#   - The 20 mirror repos must exist (empty is fine). Create them once:
+#       for pkg in active-record auth bus config console container facades \
+#                  framework http i18n laravel-flavor log persistence \
+#                  phpstan-rules routing security storage testing validation view; do
+#         gh repo create "codinglombok/$pkg" --public --description \
+#           "[READ-ONLY] Subtree split of lombokclarion/$pkg — do not send PRs here."
+#       done
+
+name: Split Packages
+
+on:
+  push:
+    branches: [main]
+    tags: ['v[0-9]*']
+
+permissions:
+  contents: read
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    # Only run after CI passes (on main push the CI workflow runs in parallel;
+    # this job is fast enough that adding a workflow_run dependency would add
+    # more latency than value — if CI fails, the split is harmless because
+    # Packagist only picks up tagged releases, and tags are only pushed after
+    # a green CI run).
+    steps:
+      - name: Checkout monorepo (full history for subtree split)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git for push
+        run: |
+          git config user.name "lombokclarion-bot"
+          git config user.email "bot@lombokclarion.dev"
+
+      - name: Split and push all packages
+        env:
+          SPLIT_TOKEN: ${{ secrets.SPLIT_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          PACKAGES=(
+            active-record
+            auth
+            bus
+            config
+            console
+            container
+            facades
+            framework
+            http
+            i18n
+            laravel-flavor
+            log
+            persistence
+            phpstan-rules
+            routing
+            security
+            storage
+            testing
+            validation
+            view
+          )
+
+          # Detect whether this is a tag push
+          TAG=""
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+            echo "Tag detected: $TAG"
+          fi
+
+          FAILED=()
+          for pkg in "${PACKAGES[@]}"; do
+            REMOTE="https://x-access-token:${SPLIT_TOKEN}@github.com/codinglombok/${pkg}.git"
+            BRANCH="split/${pkg}"
+            PREFIX="packages/${pkg}"
+
+            echo "::group::${pkg}"
+
+            # Clean up any leftover branch from a previous iteration
+            git branch -D "$BRANCH" 2>/dev/null || true
+
+            # Subtree split
+            if ! git subtree split --prefix="$PREFIX" -b "$BRANCH" >/dev/null 2>&1; then
+              echo "::error::subtree split failed for ${pkg}"
+              FAILED+=("$pkg")
+              echo "::endgroup::"
+              continue
+            fi
+
+            # Force-push branch to mirror's main
+            if ! git push --force "$REMOTE" "${BRANCH}:main" 2>/dev/null; then
+              echo "::error::push failed for ${pkg}"
+              FAILED+=("$pkg")
+              git branch -D "$BRANCH" 2>/dev/null || true
+              echo "::endgroup::"
+              continue
+            fi
+
+            # If this is a tag push, also push the tag to the mirror
+            if [[ -n "$TAG" ]]; then
+              # Create a tag on the split branch pointing to its HEAD
+              SPLIT_SHA=$(git rev-parse "$BRANCH")
+              git tag -f "$TAG" "$SPLIT_SHA" >/dev/null 2>&1
+              if ! git push --force "$REMOTE" "refs/tags/${TAG}" 2>/dev/null; then
+                echo "::warning::tag push failed for ${pkg} (branch push succeeded)"
+              fi
+              # Remove the temporary tag so it doesn't interfere with the next package
+              git tag -d "$TAG" >/dev/null 2>&1 || true
+            fi
+
+            git branch -D "$BRANCH" 2>/dev/null || true
+            echo "${pkg}: OK"
+            echo "::endgroup::"
+          done
+
+          if [[ ${#FAILED[@]} -gt 0 ]]; then
+            echo "::error::Failed packages: ${FAILED[*]}"
+            exit 1
+          fi
+
+          echo "All ${#PACKAGES[@]} packages split and pushed."

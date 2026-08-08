@@ -1,0 +1,19 @@
+LombokClarion
+Copyright 2026 codinglombok
+
+This product includes software developed by codinglombok.
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+---
+
+Third-party assets vendored under resources/ keep their own licenses and are
+NOT relicensed by this NOTICE:
+
+- resources/lombokcss/  — LombokCSS, MIT License.
+  See resources/lombokcss/LICENSE-lombokcss.
+- resources/lombokcharts/ — LombokCharts, MIT License.
+  See resources/lombokcharts/LICENSE-lombokcharts.
+
+Their MIT terms remain in force for those files. The Apache-2.0 license above
+applies to the LombokClarion framework's own source (packages/, app/,
+bootstrap/, bin/, config/, tests/, docs/).

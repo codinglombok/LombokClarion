@@ -1,14 +1,22 @@
 {
     "name": "lombokclarion/http",
-    "description": "Immutable Request/Response value objects, Middleware contract, and RequestContext for LombokClarion.",
+    "description": "Immutable Request/Response value objects, Middleware contract, RequestContext, and tenancy for LombokClarion.",
     "type": "library",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
-        "php": ">=8.3"
+        "php": ">=8.3",
+        "ext-pdo": "*",
+        "lombokclarion/persistence": "*",
+        "lombokclarion/log": "*"
     },
     "autoload": {
         "psr-4": {
             "LombokClarion\\Http\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
         }
     }
 }

@@ -1,0 +1,23 @@
+{
+    "name": "lombokclarion/validation",
+    "description": "FormRequest validation with a typed rule vocabulary — no pipe-string DSL, explicit DTO mapping, violations rendered through i18n.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.3",
+        "ext-mbstring": "*",
+        "ext-fileinfo": "*",
+        "lombokclarion/http": "*",
+        "lombokclarion/i18n": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Validation\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
+        }
+    }
+}

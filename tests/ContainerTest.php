@@ -136,7 +136,7 @@ test('compiler produces a working compiled container with zero reflection at run
     // Anything a closure/array-callable factory needs must ALSO be bound
     // explicitly: the compiler cannot see inside a factory's body, only
     // inside constructor signatures. This is consistent with "explicit
-    // over magic" (master prompt §2.5).
+    // over magic" (design spec §2.5).
     $dev->bind(Test_Logger::class, Test_Logger::class);
     $dev->singleton(Test_Service::class, [Test_Factories::class, 'makeService']);
 

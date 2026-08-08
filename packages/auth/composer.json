@@ -1,0 +1,23 @@
+{
+    "name": "lombokclarion/auth",
+    "description": "Official, non-core auth package: stateless HMAC session tokens, Authenticate/Authorize middleware, and hand-registered RBAC policies. No static Auth::user(), no attribute scanning.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.3",
+        "ext-pdo": "*",
+        "lombokclarion/http": "*",
+        "lombokclarion/security": "*",
+        "lombokclarion/persistence": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Auth\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
+        }
+    }
+}

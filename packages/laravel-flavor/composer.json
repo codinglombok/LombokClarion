@@ -1,0 +1,31 @@
+{
+    "name": "lombokclarion/laravel-flavor",
+    "description": "Optional preset: the entire 'magic' surface (facades, ActiveRecord connection, default middleware) enabled by ONE greppable bootstrap call. Isolated from app/Domain/** via forbidden-layers.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.3",
+        "ext-pdo": "*",
+        "lombokclarion/container": "*",
+        "lombokclarion/facades": "*",
+        "lombokclarion/active-record": "*",
+        "lombokclarion/persistence": "*",
+        "lombokclarion/auth": "*",
+        "lombokclarion/security": "*"
+    },
+    "extra": {
+        "lombokclarion": {
+            "forbidden-layers": [
+                "app/Domain"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\LaravelFlavor\\": "src/"
+        }
+    }
+}

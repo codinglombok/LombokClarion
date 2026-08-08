@@ -1,0 +1,20 @@
+{
+    "name": "lombokclarion/storage",
+    "description": "File storage behind relative, traversal-validated paths. Local filesystem only — cloud drivers are separate packages depending on the Storage interface, never core dependencies.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/http": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Storage\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
+        }
+    }
+}

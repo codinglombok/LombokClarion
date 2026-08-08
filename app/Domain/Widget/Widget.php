@@ -7,7 +7,7 @@ namespace App\Domain\Widget;
 /**
  * Plain PHP. No LombokClarion\* imports anywhere in app/Domain/** — this
  * is enforced in CI (see bin/check-domain-boundary.php, standing in for
- * Deptrac per master prompt §3's hard rule).
+ * Deptrac per design spec §3's hard rule).
  */
 final class Widget
 {

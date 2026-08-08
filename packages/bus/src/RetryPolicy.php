@@ -8,7 +8,7 @@ namespace LombokClarion\Bus;
  * Queued commands get exactly one attempt unless they explicitly opt into
  * retries by implementing RetriesQueuedCommand and returning a RetryPolicy
  * from retryPolicy(). There is no implicit/global retry-and-backoff
- * behaviour anywhere in the queue worker (master prompt §10).
+ * behaviour anywhere in the queue worker (design spec §10).
  */
 final class RetryPolicy
 {

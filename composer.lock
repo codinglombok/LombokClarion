@@ -1,0 +1,634 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "271c56d603148c5b1f76a897a2f51eb8",
+    "packages": [
+        {
+            "name": "lombokclarion/active-record",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/active-record",
+                "reference": "2f66fe6ee96c6448e33f9867ed920bbf883b861b"
+            },
+            "require": {
+                "lombokclarion/persistence": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "lombokclarion": {
+                    "forbidden-layers": [
+                        "app/Domain"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\ActiveRecord\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Optional ActiveRecord pattern for LombokClarion. Explicitly isolated from core and domain layer (§2.6, §4.12). MUST NOT leak into app/Domain/**.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/auth",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/auth",
+                "reference": "3ce416f03b1f99f7f36dd6b0e37e383544b21f63"
+            },
+            "require": {
+                "ext-pdo": "*",
+                "lombokclarion/http": "*",
+                "lombokclarion/persistence": "*",
+                "lombokclarion/security": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Auth\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Official, non-core auth package: stateless HMAC session tokens, Authenticate/Authorize middleware, and hand-registered RBAC policies. No static Auth::user(), no attribute scanning.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/bus",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/bus",
+                "reference": "cbcf4c27963845f14e1fe21371e5f238757ffa3e"
+            },
+            "require": {
+                "ext-pdo": "*",
+                "lombokclarion/container": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Bus\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Explicit CommandBus, QueryBus, and EventBus for LombokClarion. One handler per command/query, explicitly registered; no auto-discovery.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/config",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/config",
+                "reference": "5e12161eebadfef96fe850dde13ac02f5cb88b79"
+            },
+            "require": {
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Config\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Typed config compiler: turns a schema + environment into a tree of readonly PHP classes ($config->mail->smtp->host), never array-soup config('a.b.c').",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/console",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/console",
+                "reference": "9d57fde5210b82c0b532681e39eb60c19ec6a9e6"
+            },
+            "require": {
+                "ext-pdo": "*",
+                "lombokclarion/bus": "*",
+                "lombokclarion/config": "*",
+                "lombokclarion/container": "*",
+                "lombokclarion/persistence": "*",
+                "lombokclarion/routing": "*",
+                "lombokclarion/view": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Console\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Explicit CLI kernel for LombokClarion, plus built-in migrate/optimize/audit:sql/audit:security commands.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/container",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/container",
+                "reference": "2c67f6a6a9bed37c57c92806784e7b7395772816"
+            },
+            "require": {
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Container\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Explicit, compile-checked dependency injection container for LombokClarion. No auto-discovery of interface bindings; zero reflection at request time once compiled.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/facades",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/facades",
+                "reference": "7faa3230b231c4569ef993325f3d4aaca2de46b8"
+            },
+            "require": {
+                "lombokclarion/bus": "*",
+                "lombokclarion/container": "*",
+                "lombokclarion/security": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "lombokclarion": {
+                    "forbidden-layers": [
+                        "app/Domain"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Facades\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Optional static-accessor facades for LombokClarion. Explicitly isolated from core and domain layer (§2.6, §4.12). MUST NOT leak into app/Domain/**.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/http",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/http",
+                "reference": "2be302627e65e01ac2932e5bdc388b54fae9ac1d"
+            },
+            "require": {
+                "ext-pdo": "*",
+                "lombokclarion/log": "*",
+                "lombokclarion/persistence": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Http\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Immutable Request/Response value objects, Middleware contract, RequestContext, and tenancy for LombokClarion.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/i18n",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/i18n",
+                "reference": "962896839e0fdfdea1204b7ffc6b5c25b7da21f7"
+            },
+            "require": {
+                "lombokclarion/http": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\I18n\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Explicit internationalization for LombokClarion: locale catalogs are plain PHP files listed in a manifest, never directory-scanned. Parameter interpolation, count-based pluralization, fallback locale.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/laravel-flavor",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/laravel-flavor",
+                "reference": "6d38325a7900927efd23e014cdb34fb575fb4442"
+            },
+            "require": {
+                "ext-pdo": "*",
+                "lombokclarion/active-record": "*",
+                "lombokclarion/auth": "*",
+                "lombokclarion/container": "*",
+                "lombokclarion/facades": "*",
+                "lombokclarion/persistence": "*",
+                "lombokclarion/security": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "lombokclarion": {
+                    "forbidden-layers": [
+                        "app/Domain"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\LaravelFlavor\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Optional preset: the entire 'magic' surface (facades, ActiveRecord connection, default middleware) enabled by ONE greppable bootstrap call. Isolated from app/Domain/** via forbidden-layers.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/log",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/log",
+                "reference": "7e5c369a650a4c9e9c95b96f1eed694224d7f947"
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Log\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Structured logging: levels, channels, handlers, formatters, and non-optional context redaction. No global logger and no static facade — a Logger is constructor-injected like every other service.",
+            "homepage": "https://github.com/codinglombok/LombokClarion",
+            "keywords": [
+                "logging",
+                "lombokclarion",
+                "structured-logging"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/persistence",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/persistence",
+                "reference": "beb768adfeae3ee02bfa1858fa97aad483c0a381"
+            },
+            "require": {
+                "ext-pdo": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Persistence\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "QueryBuilder (bound parameters only), SchemaBuilder, and an explicit-manifest MigrationRunner for LombokClarion.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/routing",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/routing",
+                "reference": "9cfcf3b97eca692e602e7ad517551de49e2626d1"
+            },
+            "require": {
+                "lombokclarion/container": "*",
+                "lombokclarion/http": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Routing\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Explicit route table, middleware pipeline, Kernel, and runtime adapters (FPM/Function/Swoole) for LombokClarion.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/security",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/security",
+                "reference": "329e51c661c27a319c9faa4181c75c1f9ff45531"
+            },
+            "require": {
+                "ext-openssl": "*",
+                "lombokclarion/http": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Security\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Official, non-core security package: Argon2id hashing, stateless CSRF, RateLimit, SecurityHeaders, Encrypted<T> field wrapper, and FormRequest validation.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/storage",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/storage",
+                "reference": "76c804fef6884bca54a18c5ebe63bc50f7f63681"
+            },
+            "require": {
+                "lombokclarion/http": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Storage\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "File storage behind relative, traversal-validated paths. Local filesystem only — cloud drivers are separate packages depending on the Storage interface, never core dependencies.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/validation",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/validation",
+                "reference": "564e9162322d0fedf4832b3b86f5b22a4295f799"
+            },
+            "require": {
+                "ext-fileinfo": "*",
+                "ext-mbstring": "*",
+                "lombokclarion/http": "*",
+                "lombokclarion/i18n": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Validation\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "FormRequest validation with a typed rule vocabulary — no pipe-string DSL, explicit DTO mapping, violations rendered through i18n.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "lombokclarion/view",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/view",
+                "reference": "aded2bb22384b7fafbf8d1bf49299f649f7ad203"
+            },
+            "require": {
+                "lombokclarion/http": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\View\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Blade-like template compiler for LombokClarion. Auto-escaping by default; {!! !!} is the explicit, audit-flagged opt-out.",
+            "transport-options": {
+                "relative": true
+            }
+        }
+    ],
+    "packages-dev": [
+        {
+            "name": "lombokclarion/testing",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/testing",
+                "reference": "75271b99c4dcca7446a5fc5c30de09d1d2ea6694"
+            },
+            "require": {
+                "lombokclarion/bus": "*",
+                "lombokclarion/console": "*",
+                "lombokclarion/container": "*",
+                "lombokclarion/http": "*",
+                "lombokclarion/routing": "*",
+                "php": ">=8.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LombokClarion\\Testing\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Test helpers for LombokClarion: InMemoryRepository, FakeCommandBus/FakeEventBus, HttpTestCase, ConsoleTestCase, and the ColdStartTest budget check.",
+            "transport-options": {
+                "relative": true
+            }
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.3",
+        "ext-pdo": "*",
+        "ext-openssl": "*",
+        "ext-mbstring": "*",
+        "ext-fileinfo": "*"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}

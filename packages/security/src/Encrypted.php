@@ -18,7 +18,7 @@ namespace LombokClarion\Security;
  *
  * — so "this field is encrypted at rest" is visible in the entity's own
  * type declaration, not buried in a repository or a database column
- * annotation (master prompt §6).
+ * annotation (design spec §6).
  */
 final class Encrypted
 {

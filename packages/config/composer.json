@@ -2,13 +2,18 @@
     "name": "lombokclarion/config",
     "description": "Typed config compiler: turns a schema + environment into a tree of readonly PHP classes ($config->mail->smtp->host), never array-soup config('a.b.c').",
     "type": "library",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
         "php": ">=8.3"
     },
     "autoload": {
         "psr-4": {
             "LombokClarion\\Config\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
         }
     }
 }

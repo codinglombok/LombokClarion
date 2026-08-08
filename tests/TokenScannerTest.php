@@ -95,3 +95,69 @@ test('audit:sql without --explain does not touch the database', function () {
     assertSame(0, $exit);
     rmdir($emptyDir);
 });
+
+// --- Variable-indirection regression (the one-line bypass) ------------------
+// These guard the blind spot found when the PHPStan sibling rule was first
+// executed: both engines only inspected the call site, so assigning the SQL to
+// a variable first hid it completely. A false negative in an audit is a
+// security bug (SECURITY.md), so each shape gets a permanent test.
+
+test('TokenScanner flags SQL concatenated into a variable before query()', function () {
+    $findings = test_scan_source(
+        '<?php $sql = "SELECT * FROM t WHERE id = " . $id; $pdo->query($sql);'
+    );
+    assertSame(1, count($findings));
+    assertTrue(str_contains($findings[0], '$sql'));
+});
+
+test('TokenScanner flags SQL interpolated into a variable before exec()', function () {
+    $findings = test_scan_source(
+        '<?php $sql = "DELETE FROM t WHERE id = $id"; $pdo->exec($sql);'
+    );
+    assertSame(1, count($findings));
+    assertTrue(str_contains($findings[0], '$sql'));
+});
+
+test('TokenScanner reports the nearest preceding tainting assignment', function () {
+    $code = "<?php\n"
+        . "\$sql = 'SELECT * FROM a WHERE id = ' . \$id;\n"
+        . "\$pdo->query(\$sql);\n"
+        . "\$sql = 'SELECT * FROM b WHERE id = ' . \$id;\n"
+        . "\$pdo->query(\$sql);\n";
+    $findings = test_scan_source($code);
+    assertSame(2, count($findings));
+    assertTrue(str_contains($findings[0], 'line 2'));
+    assertTrue(str_contains($findings[1], 'line 4'));
+});
+
+test('literal-only .= chains never taint (bound-parameter builders stay clean)', function () {
+    $code = "<?php\n"
+        . "\$sql = 'SELECT * FROM jobs WHERE ready = ?';\n"
+        . "if (\$queue !== null) { \$sql .= ' AND queue = ?'; }\n"
+        . "\$sql .= ' LIMIT 1';\n"
+        . "\$stmt = \$pdo->prepare(\$sql);\n";
+    assertSame([], test_scan_source($code));
+});
+
+// --- Escape hatches, shared by both engines --------------------------------
+
+test('Identifier::quote() into a variable is not treated as tainted', function () {
+    $code = "<?php\n"
+        . "\$quoted = Identifier::quote(\$table);\n"
+        . "\$pdo->query('SELECT COUNT(*) FROM ' . \$quoted);\n";
+    assertSame([], test_scan_source($code));
+});
+
+test('TrustedDdl::mark() marks a reviewed DDL site as clean', function () {
+    $code = "<?php\n"
+        . "\$sql = \"CREATE TABLE t (id \$autoIncrement)\";\n"
+        . "\$pdo->exec(TrustedDdl::mark(\$sql));\n";
+    assertSame([], test_scan_source($code));
+});
+
+test('an unmarked interpolated DDL site is still reported', function () {
+    $code = "<?php\n"
+        . "\$sql = \"CREATE TABLE t (id \$autoIncrement)\";\n"
+        . "\$pdo->exec(\$sql);\n";
+    assertSame(1, count(test_scan_source($code)));
+});

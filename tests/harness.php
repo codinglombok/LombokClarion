@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+// The suite IS a local environment and says so explicitly. The APP_KEY
+// production guard (#44) treats an UNSET APP_ENV as production — fail
+// safe, not open — so the harness must declare itself rather than rely
+// on the default that guard exists to distrust.
+putenv('APP_ENV=testing');
+
 require __DIR__ . '/../autoload.php';
 
 /** @var array<string, callable> $__tests */

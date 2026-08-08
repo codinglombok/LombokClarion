@@ -10,14 +10,14 @@ use LombokClarion\View\Exceptions\ViewException;
  * Compiles LombokClarion templates (*.lc.php) to plain PHP.
  *
  * `{{ $value }}` is ALWAYS auto-escaped (htmlspecialchars). Opting out
- * requires the explicit `{!! $value !!}` syntax — and per master prompt
+ * requires the explicit `{!! $value !!}` syntax — and per design spec
  * §7, that opt-out is meant to be flagged by a sibling XSS audit rule
  * (`lombokclarion audit:sql --xss` / a dedicated audit command) unless the
  * value is wrapped in Safe::mark(), which the audit rule treats as an
  * explicit, reviewed opt-out rather than a silent gap.
  *
- * Supported directives: @if/@elseif/@else/@endif, @foreach/@endforeach,
- * @extends/@section/@endsection/@yield, @include.
+ * Supported directives (all @-prefixed in templates): if/elseif/else/endif,
+ * foreach/endforeach, extends/section/endsection/yield, include.
  */
 final class ViewCompiler
 {

@@ -2,13 +2,19 @@
     "name": "lombokclarion/view",
     "description": "Blade-like template compiler for LombokClarion. Auto-escaping by default; {!! !!} is the explicit, audit-flagged opt-out.",
     "type": "library",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
-        "php": ">=8.3"
+        "php": ">=8.3",
+        "lombokclarion/http": "*"
     },
     "autoload": {
         "psr-4": {
             "LombokClarion\\View\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
         }
     }
 }

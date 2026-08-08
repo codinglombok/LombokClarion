@@ -11,6 +11,9 @@ use LombokClarion\Http\ResolveTenant;
 use LombokClarion\Http\Response;
 use LombokClarion\Http\Tenant;
 use LombokClarion\Http\TenantAwareConnection;
+use LombokClarion\Persistence\ConnectionConfig;
+use LombokClarion\Persistence\ConnectionManager;
+use LombokClarion\Persistence\Exceptions\QueryException;
 use LombokClarion\Routing\Kernel;
 use LombokClarion\Routing\Router;
 
@@ -130,5 +133,57 @@ test('TenantAwareConnection throws when no tenant or no databaseName', function 
     assertThrows(RuntimeException::class, fn () => TenantAwareConnection::forTenant(null, 'sqlite:{database}'));
     assertThrows(RuntimeException::class, fn () => TenantAwareConnection::forTenant(
         new Tenant('x', 'X', null), 'sqlite:{database}'
+    ));
+});
+
+// --- Stage 10: tenancy now routes THROUGH the ConnectionManager ----------
+
+test('TenantAwareConnection instance form resolves tenants through the manager', function () {
+    $dir = sys_get_temp_dir() . '/lc_tenant_mgr_' . uniqid();
+    mkdir($dir);
+
+    $manager = new ConnectionManager([
+        'tenants' => ConnectionConfig::template('sqlite', "sqlite:$dir/{database}.sqlite"),
+    ], default: 'tenants');
+
+    $tenancy = new TenantAwareConnection($manager, 'tenants');
+
+    $acme = $tenancy->forTenantInstance(new Tenant('acme', 'Acme', 'acme'));
+    $acme->exec('CREATE TABLE ping (id INTEGER)');
+
+    $globex = $tenancy->forTenantInstance(new Tenant('globex', 'Globex', 'globex'));
+    $tables = $globex->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll(PDO::FETCH_COLUMN);
+    assertSame([], $tables, 'tenant databases must stay isolated');
+
+    // The delegation is the point: the manager's cache is what the tenant gets,
+    // rather than a fresh handle per resolution the way Stage 9 did it.
+    assertTrue($tenancy->forTenantInstance(new Tenant('acme', 'Acme', 'acme')) === $acme);
+    assertTrue($manager->forDatabase('tenants', 'acme') === $acme);
+
+    unlink("$dir/acme.sqlite");
+    unlink("$dir/globex.sqlite");
+    rmdir($dir);
+});
+
+test('the instance form still refuses an unresolved tenant', function () {
+    $manager = new ConnectionManager([
+        'tenants' => ConnectionConfig::template('sqlite', 'sqlite:/tmp/{database}.sqlite'),
+    ], default: 'tenants');
+    $tenancy = new TenantAwareConnection($manager, 'tenants');
+
+    assertThrows(RuntimeException::class, fn () => $tenancy->forTenantInstance(null));
+    assertThrows(RuntimeException::class, fn () => $tenancy->forTenantInstance(new Tenant('x', 'X', null)));
+});
+
+test('a tenant database name that could rewrite the DSN is refused', function () {
+    $manager = new ConnectionManager([
+        'tenants' => ConnectionConfig::template('pgsql', 'pgsql:host=db;dbname={database}'),
+    ], default: 'tenants');
+    $tenancy = new TenantAwareConnection($manager, 'tenants');
+
+    // A tenant record is data. If it ever carries a hostile databaseName, the
+    // manager's validation is what stands between it and the DSN.
+    assertThrows(QueryException::class, fn () => $tenancy->forTenantInstance(
+        new Tenant('evil', 'Evil', 'app;host=attacker.example')
     ));
 });

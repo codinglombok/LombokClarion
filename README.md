@@ -1,54 +1,97 @@
 # LombokClarion
 
-[![CI](https://github.com/codinglombok/lombokclarion/actions/workflows/ci.yml/badge.svg)](https://github.com/codinglombok/lombokclarion/actions/workflows/ci.yml)
-[![Deploy docs](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml/badge.svg)](https://github.com/codinglombok/lombokclarion/actions/workflows/pages.yml)
-[![npm version](https://img.shields.io/npm/v/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
-[![npm downloads](https://img.shields.io/npm/dm/lombokclarion.svg)](https://www.npmjs.com/package/lombokclarion)
-[![](https://data.jsdelivr.com/v1/package/npm/lombokclarion/badge)](https://www.jsdelivr.com/package/npm/lombokclarion)
+A PHP 8.3+ Full Stack Web framework built on the philosophy **explicit over
+magic**: edge/serverless-first, domain layer with zero framework imports,
+containerization-ready.
 
-[![License](https://img.shields.io/github/license/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/blob/main/LICENSE)
-[![Release](https://img.shields.io/github/v/release/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/releases)
-[![GitHub stars](https://img.shields.io/github/stars/codinglombok/LombokClarion?style=social)](https://github.com/codinglombok/LombokClarion/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/codinglombok/LombokClarion?style=social)](https://github.com/codinglombok/LombokClarion/network/members)
-[![GitHub issues](https://img.shields.io/github/issues/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/issues)
-[![Top language](https://img.shields.io/github/languages/top/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/search?l=)
-[![Last commit](https://img.shields.io/github/last-commit/codinglombok/LombokClarion)](https://github.com/codinglombok/LombokClarion/commits)
+**Core capabilities:** DI Container + AOT compilation, Routing + 3 runtime
+adapters (FPM/Function/Swoole), Persistence (QueryBuilder, Schema, Migrations,
+Seeding), ActiveRecord (opt-in), Auth (HMAC token, RBAC, Gate/Policy),
+Validation + i18n (24 languages).
 
-An implementation of the LombokClarion framework as : explicit-over-magic, edge/serverless-first,
-PHP 8.3+, no facades, no auto-discovery, domain layer with zero framework
-imports.
+Facades and ActiveRecord exist as **opt-in packages** (`lombokclarion/facades`,
+`lombokclarion/active-record`, `lombokclarion/laravel-flavor`) but are never
+loaded by default — no core package depends on them, and the domain-boundary
+gate blocks them from `app/Domain/**`. There is no auto-discovery anywhere:
+every binding, route, command, and migration is registered in an explicit
+manifest file.
 
-What this is
-
-LombokClarion is a PHP framework (PHP 8.3+, strict_types everywhere) built from
-scratch, clean code, on the opposite philosophy of
-Laravel: explicit over magic. No facades by default, no auto-discovery, no
-ActiveRecord in core, a domain layer with zero framework imports, and an
-edge/serverless-first design with a cold-start budget enforced at build time.
-
-Structure: Composer monorepo, 12 packages + an end-to-end example app
-(Widget feature: JSON API + HTML starter-kit pages + charts dashboard).
-
-This repo contains **working, tested code** for every item (§4), plus a small end-to-end example app (a Widget
-CRUD-ish feature) wiring all of it together. It is not a drop-in
-`composer create-project` package yet — see "What's not here yet" below —
+This repo contains **working, tested code** (377 tests, 0 failures) plus a
+small end-to-end example app (a Widget CRUD feature) wiring all packages
+together. It is not a drop-in `composer create-project` package yet — see
+"What's not here yet" below —
 but every piece that exists actually runs, and is covered by tests that
-actually run (124 tests, 0 failures, see "Running the tests").
+actually run (377 tests, 0 failures, see "Running the tests").
+
+## Installing / consuming the packages
+
+The packages are published to Packagist under the `lombokclarion/*` vendor. Pull
+the whole runtime stack in one shot with the metapackage:
+
+```bash
+composer require lombokclarion/framework
+```
+
+`lombokclarion/framework` installs the full runtime (including the opt-in magic
+packages — requiring it is itself the explicit "give me everything" choice). It
+leaves out the two dev-only packages, which you add to require-dev yourself:
+
+```bash
+composer require --dev lombokclarion/testing lombokclarion/phpstan-rules
+```
+
+Or install packages individually — and note that requiring one never drags in
+another's optional pieces (`require lombokclarion/persistence` does **not** pull
+ActiveRecord):
+
+```bash
+composer require lombokclarion/routing lombokclarion/http lombokclarion/persistence
+# the "magic" packages, only if you ask for them by name:
+composer require lombokclarion/active-record lombokclarion/facades lombokclarion/laravel-flavor
+```
+
+This repository (`codinglombok/LombokClarion`) is the **canonical monorepo** where
+all development happens; each package is mirrored read-only to its own repo, and
+those mirrors are what Packagist watches. Contribute here, not to the mirrors. The
+full rationale, the vendor/org mapping (`lombokclarion/*` on Packagist ↔
+`codinglombok/*` on GitHub), and the release flow live in
+[`docs/PUBLISHING.md`](docs/PUBLISHING.md).
+
+To hack on the framework itself, clone this monorepo and use it directly — the
+packages resolve to each other as `path` repositories, so `composer install`
+needs no network:
+
+```bash
+git clone https://github.com/codinglombok/LombokClarion.git
+cd LombokClarion && composer install
+php bin/lombokclarion migrate && php bin/lombokclarion optimize
+php tests/run-all.php
+```
 
 ## Layout
 
 ```
-packages/
-  container/    LombokClarion\Container   — DI container + AOT compiler
-  http/         LombokClarion\Http        — Request/Response/Middleware
-  routing/      LombokClarion\Routing     — Router, Kernel, runtime adapters
-  bus/          LombokClarion\Bus         — CommandBus/QueryBus/EventBus
-  config/       LombokClarion\Config      — typed config compiler
-  persistence/  LombokClarion\Persistence — QueryBuilder/SchemaBuilder/migrations
-  view/         LombokClarion\View        — Blade-like compiler, auto-escaping
-  console/      LombokClarion\Console     — CLI kernel + built-in commands
-  security/     LombokClarion\Security    — hashing/CSRF/rate-limit/headers/encryption
-  testing/      LombokClarion\Testing     — HttpTestCase, fakes, ColdStartTest
+packages/                                    20 packages
+  container/       LombokClarion\Container      — DI container + AOT compiler
+  http/            LombokClarion\Http           — Request/Response/Middleware/ErrorHandler
+  routing/         LombokClarion\Routing        — Router, Kernel, runtime adapters
+  bus/             LombokClarion\Bus            — CommandBus/QueryBus/EventBus
+  config/          LombokClarion\Config         — typed config compiler
+  persistence/     LombokClarion\Persistence    — QueryBuilder/SchemaBuilder/migrations/seeding
+  view/            LombokClarion\View           — Blade-like compiler, auto-escaping
+  console/         LombokClarion\Console        — CLI kernel + 12 built-in commands
+  security/        LombokClarion\Security       — hashing/CSRF/rate-limit/headers/encryption
+  auth/            LombokClarion\Auth           — AuthManager/Gate/Policy/RBAC/TokenIssuer
+  i18n/            LombokClarion\I18n           — Translator + DetectLocale middleware
+  validation/      LombokClarion\Validation     — Validator/FormRequest/Rule (24 locales)
+  storage/         LombokClarion\Storage        — LocalStorage with Storage interface
+  log/             LombokClarion\Log            — Logger/ChannelLogger/StreamHandler/Redactor
+  active-record/   LombokClarion\ActiveRecord   — Model base class + EagerLoader (opt-in magic)
+  facades/         LombokClarion\Facades        — Facade base + Bus/Event/Hash (opt-in magic)
+  laravel-flavor/  LombokClarion\LaravelFlavor  — Auth/DB facade shims (opt-in magic)
+  testing/         LombokClarion\Testing        — HttpTestCase, fakes, ColdStartTest
+  phpstan-rules/   LombokClarion\PHPStanRules   — SQL-injection + domain-boundary PHPStan ext
+  framework/       (metapackage)                — one-require for full runtime stack
 
 app/
   Domain/Widget/        entity, repository interface, command+query, handlers
@@ -65,12 +108,14 @@ bootstrap/
   routes.php     every route + its middleware, one file
   console.php    every CLI command, one file
   migrations.php explicit migration manifest (no directory scanning)
+  seeders.php    explicit seeder manifest
+  externals.php  external library integrations (TableSheet, etc.)
 
 config/config.schema.php   typed config schema
 public/index.php           HTTP entrypoint (FpmAdapter)
 bin/lombokclarion           CLI entrypoint
 bin/check-domain-boundary.php  Deptrac-equivalent CI check (see below)
-tests/                      124 tests across 15 files, custom zero-dependency harness
+tests/                      377 tests across 27 files, custom zero-dependency harness
 ```
 
 ## Why a custom autoloader instead of Composer?
@@ -114,36 +159,36 @@ curl -X POST localhost:8080/api/widgets -d name=Lamp -d price_cents=1500
 # -> 419 CSRF token mismatch (correct: CSRF is required on this route)
 ```
 
-## What each design maps to
+## Design requirements mapping
 
-| Section | Requirement                                                                                                    | Where                                                                                                                                                                          |
-| ------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 2.1-2.6 | No facades/statics/auto-discovery, explicit config, magic opt-in                                               | Every package - no `Facade` class exists anywhere; every binding is in `bootstrap/services.php`                                                                                |
-| 3       | Container to Router to Middleware to Container to Controller to Bus to Domain to Repository flow               | `packages/routing/src/Kernel.php`                                                                                                                                              |
-| 3       | Domain layer zero framework imports, CI-enforced                                                               | `app/Domain/Widget/*` + `bin/check-domain-boundary.php` (passing; verified it also _fails_ on a deliberately-introduced violation)                                             |
-| 4.1     | Container: explicit binding, no reflection auto-wiring of _interfaces_                                         | `packages/container/src/Container.php`                                                                                                                                         |
-| 4.2     | Http: Request/Response value objects                                                                           | `packages/http/src/Request.php`, `Response.php`                                                                                                                                |
-| 4.3     | Routing: route table, middleware composition, groups                                                           | `packages/routing/src/Router.php`, `Route.php`, `Kernel.php`                                                                                                                   |
-| 4.4     | Bus: Command/Query/EventBus, explicit registration                                                             | `packages/bus/src/*`                                                                                                                                                           |
-| 4.5     | Config: typed, schema-generated                                                                                | `packages/config/src/ConfigCompiler.php` - `$config->mail->smtp->host` as real typed property access, not `config('a.b.c')`                                                    |
-| 4.6     | Kernel + FpmAdapter, FunctionAdapter, SwooleAdapter                                                            | `packages/routing/src/Adapters/*`                                                                                                                                              |
-| 4.7     | Persistence: bound-params-only QueryBuilder, SchemaBuilder, migration runner reading an explicit manifest      | `packages/persistence/src/*`                                                                                                                                                   |
-| 4.8     | View: Blade-like compiler, auto-escaping by default, compiled/cached ahead of time                             | `packages/view/src/*`                                                                                                                                                          |
-| 4.9     | Console: CLI kernel, same container as HTTP                                                                    | `packages/console/src/*`                                                                                                                                                       |
-| 4.10    | Testing: HttpTestCase, fakes, InMemoryRepository, ColdStartTest                                                | `packages/testing/src/*`                                                                                                                                                       |
-| 4.11    | Security package: Argon2id, CSRF, rate-limit, security headers, `Encrypted<T>`                                 | `packages/security/src/*`                                                                                                                                                      |
-| 5       | Cold-start budget, compiled/reflection-free boot, no persistent-process assumptions                            | `ContainerCompiler` (AOT reflection) + `CompiledContainer` (zero reflection) + `ColdStartTest`; verified the compiled boot path actually serves a request correctly end-to-end |
-| 6       | Security requirements (hashing, CSRF, sessions, validation, rate limit, headers, encryption, `audit:security`) | `packages/security/*` + `AuditSecurityCommand`                                                                                                                                 |
-| 7       | SQL/injection hardening, `audit:sql`, N+1 `with()`, MySQL non-transactional migrations                         | `QueryBuilder`/`Identifier`/`RawExpression` + `AuditSqlCommand` + `SchemaBuilder::migrationsAreTransactionalByDefault()`                                                       |
-| 9       | Domain tests need zero HTTP/DB; `HttpTestCase` boots the _real_ container                                      | `InMemoryRepository` + `HttpTestCase`                                                                                                                                          |
-| 10      | No implicit retry on queued commands                                                                           | `RetryPolicy::none()` is the only default; `RetriesQueuedCommand` is opt-in                                                                                                    |
+| Section | Requirement | Where |
+|----|---|---|
+| 2.1-2.6 | No auto-discovery, explicit config, magic opt-in only | Core packages never use facades; `lombokclarion/facades` is opt-in with `forbidden-layers: [app/Domain]`; every binding is in `bootstrap/services.php` |
+| 3 | Container to Router to Middleware to Container to Controller to Bus to Domain to Repository flow | `packages/routing/src/Kernel.php` |
+| 3 | Domain layer zero framework imports, CI-enforced | `app/Domain/Widget/*` + `bin/check-domain-boundary.php` (passing; verified it also *fails* on a deliberately-introduced violation) |
+| 4.1 | Container: explicit binding, no reflection auto-wiring of *interfaces* | `packages/container/src/Container.php` |
+| 4.2 | Http: Request/Response value objects | `packages/http/src/Request.php`, `Response.php` |
+| 4.3 | Routing: route table, middleware composition, groups | `packages/routing/src/Router.php`, `Route.php`, `Kernel.php` |
+| 4.4 | Bus: Command/Query/EventBus, explicit registration | `packages/bus/src/*` |
+| 4.5 | Config: typed, schema-generated | `packages/config/src/ConfigCompiler.php` - `$config->mail->smtp->host` as real typed property access, not `config('a.b.c')` |
+| 4.6 | Kernel + FpmAdapter, FunctionAdapter, SwooleAdapter | `packages/routing/src/Adapters/*` |
+| 4.7 | Persistence: bound-params-only QueryBuilder, SchemaBuilder, migration runner reading an explicit manifest | `packages/persistence/src/*` |
+| 4.8 | View: Blade-like compiler, auto-escaping by default, compiled/cached ahead of time | `packages/view/src/*` |
+| 4.9 | Console: CLI kernel, same container as HTTP | `packages/console/src/*` |
+| 4.10 | Testing: HttpTestCase, fakes, InMemoryRepository, ColdStartTest | `packages/testing/src/*` |
+| 4.11 | Security package: Argon2id, CSRF, rate-limit, security headers, `Encrypted<T>` | `packages/security/src/*` |
+| 5 | Cold-start budget, compiled/reflection-free boot, no persistent-process assumptions | `ContainerCompiler` (AOT reflection) + `CompiledContainer` (zero reflection) + `ColdStartTest`; verified the compiled boot path actually serves a request correctly end-to-end |
+| 6 | Security requirements (hashing, CSRF, sessions, validation, rate limit, headers, encryption, `audit:security`) | `packages/security/*` + `AuditSecurityCommand` |
+| 7 | SQL/injection hardening, `audit:sql`, N+1 `with()`, MySQL non-transactional migrations | `QueryBuilder`/`Identifier`/`RawExpression` + `AuditSqlCommand` + `SchemaBuilder::migrationsAreTransactionalByDefault()` |
+| 9 | Domain tests need zero HTTP/DB; `HttpTestCase` boots the *real* container | `InMemoryRepository` + `HttpTestCase` |
+| 10 | No implicit retry on queued commands | `RetryPolicy::none()` is the only default; `RetriesQueuedCommand` is opt-in |
 
 ## Known, deliberate limitations (documented, not bugs)
 
 - **`ContainerCompiler` can't see inside closures.** A binding registered
   as `[FactoryClass::class, 'method']` is compiled as a direct static call
   (zero reflection), but if that method internally does
-  `$c->get(SomethingElse::class)`, `SomethingElse` must _also_ have its own
+  `$c->get(SomethingElse::class)`, `SomethingElse` must *also* have its own
   explicit binding (or be listed in `extraRootIds`) or the compiled
   container won't know about it. This bit the example app during
   development (`CreateWidgetHandler`/`ListWidgetsHandler` are only
@@ -158,8 +203,8 @@ curl -X POST localhost:8080/api/widgets -d name=Lamp -d price_cents=1500
   assumed) and calls `CompiledContainer::instance(PDO::class, $pdo)` before
   handling the request.
 - **`audit:sql`/`audit:security` are real, working, regex-based
-  heuristics**, not the full bundled PHPStan/Psalm ruleset describes.
-  They catch the concrete cases named in §6/§7 (string-
+  heuristics**, not a full bundled PHPStan/Psalm ruleset. They catch the
+  concrete cases named in the design spec §6/§7 (string-
   concatenated `query()`/`prepare()` calls, unmarked `{!! !!}` output,
   missing CSRF/security-headers middleware, `APP_DEBUG=true` in
   production) and are wired into `bootstrap/console.php` today.
@@ -172,11 +217,11 @@ curl -X POST localhost:8080/api/widgets -d name=Lamp -d price_cents=1500
 - The **real LombokCSS** (github.com/codinglombok/LombokCSS) is vendored
   self-hosted at `resources/lombokcss/lombok.min.css` (MIT, license included) —
   never CDN-loaded, per §8.
-- **Reality check :** the actual library's vocabulary is
+- **Reality check vs. the design spec:** the actual library's vocabulary is
   plain component classes (`.btn`, `.card`, `.navbar`, `.table`) with `--lc-*`
   design tokens and `data-style`/`data-theme` attributes — **not** the `lc-*`
-  class prefix or `data-variant`/`data-elevation` attributes
-  guessed. The starter views follow the _actual_ vocabulary, which honors the
+  class prefix or `data-variant`/`data-elevation` attributes the spec
+  guessed. The starter views follow the *actual* vocabulary, which honors the
   spec's real rule ("use LombokCSS's own vocabulary exclusively").
 - Upstream ships resonant-stark, neo-brutalism, glassmorphism (plus
   modern-corporate-flat, semantic-minimalist) but **not** `quiet-editorial` —
@@ -221,7 +266,6 @@ each is additive, not a rework of what exists:
 - Wired through `ModelQueryBuilder::with()` (ActiveRecord) and directly
   usable from explicit repositories via `EagerLoader::load()`.
 - 5 dedicated tests covering all relation types + edge cases.
-
 ## Multi-tenancy (§11) — now implemented
 
 - Tenancy is a **request-scoped container binding pattern**, not a framework
@@ -267,6 +311,8 @@ each is additive, not a rework of what exists:
 - 4 new tests covering inner join, left join (null-match rows present),
   groupBy aggregate, and invalid-identifier rejection.
 
+
+
 ## audit:sql upgraded: token-based scanner + --explain (§7)
 
 - `TokenScanner` replaces the regex heuristics with PHP-tokenizer-based
@@ -286,8 +332,8 @@ each is additive, not a rework of what exists:
 ## Plugin system (§10) — now implemented
 
 - `Plugin` interface: name() + capabilities() (['bindings','routes','commands'])
-  - register(Container). Registration is always explicit in services.php —
-    no composer-extra scanning, no vendor sweep, no self-registration.
+  + register(Container). Registration is always explicit in services.php —
+  no composer-extra scanning, no vendor sweep, no self-registration.
 - `PluginRegistrar` enforces an optional capability allow-list, so an app
   can declare in code "plugins may add bindings but never routes";
   violations fail loudly at registration. Duplicate registration throws.
@@ -298,8 +344,11 @@ each is additive, not a rework of what exists:
 - A bundled PHPStan/Psalm ruleset distributing the audit rules as real
   extension packages (today: the TokenScanner static analyzer above).
 
-  Need help? See **[SUPPORT.md](SUPPORT.md)**.
-
 ## License
 
-MIT.
+Apache License 2.0 — see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
+
+The Apache-2.0 terms cover LombokClarion's own source (`packages/`, `app/`,
+`bootstrap/`, `bin/`, `config/`, `tests/`, `docs/`). Third-party frontend assets
+vendored under `resources/` (LombokCSS, LombokCharts) keep their own MIT licenses,
+recorded in `NOTICE` and in their `LICENSE-*` files — they are not relicensed.

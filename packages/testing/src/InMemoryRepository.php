@@ -9,7 +9,7 @@ namespace LombokClarion\Testing;
  * @template TId
  *
  * Domain-layer tests should never need HTTP bootstrapping or a real
- * database (master prompt §9). Concrete repository fakes extend this and
+ * database (design spec §9). Concrete repository fakes extend this and
  * implement the domain's own RepositoryInterface, giving handlers a real
  * object to talk to without touching Persistence at all.
  */

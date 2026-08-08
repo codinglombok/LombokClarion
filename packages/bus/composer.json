@@ -2,14 +2,20 @@
     "name": "lombokclarion/bus",
     "description": "Explicit CommandBus, QueryBus, and EventBus for LombokClarion. One handler per command/query, explicitly registered; no auto-discovery.",
     "type": "library",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
         "php": ">=8.3",
+        "ext-pdo": "*",
         "lombokclarion/container": "*"
     },
     "autoload": {
         "psr-4": {
             "LombokClarion\\Bus\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
         }
     }
 }

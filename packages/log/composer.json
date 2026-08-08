@@ -1,0 +1,26 @@
+{
+    "name": "lombokclarion/log",
+    "description": "Structured logging: levels, channels, handlers, formatters, and non-optional context redaction. No global logger and no static facade — a Logger is constructor-injected like every other service.",
+    "type": "library",
+    "keywords": [
+        "logging",
+        "structured-logging",
+        "lombokclarion"
+    ],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Log\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
+        }
+    }
+}

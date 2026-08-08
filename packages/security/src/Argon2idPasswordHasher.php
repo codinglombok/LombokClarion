@@ -8,7 +8,7 @@ namespace LombokClarion\Security;
  * No app code ever calls password_hash()/password_verify() directly —
  * this is the single, injected implementation, so cost params live in one
  * typed place (SecurityConfig) instead of being copy-pasted at every call
- * site (master prompt §6).
+ * site (design spec §6).
  */
 final class Argon2idPasswordHasher implements PasswordHasher
 {

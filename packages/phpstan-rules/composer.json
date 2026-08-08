@@ -2,8 +2,26 @@
     "name": "lombokclarion/phpstan-rules",
     "description": "PHPStan extension distributing LombokClarion's audit rules (§7): no interpolated/concatenated SQL into PDO query/prepare/exec, and no LombokClarion imports inside app/Domain.",
     "type": "phpstan-extension",
-    "license": "MIT",
-    "require": { "php": ">=8.3", "phpstan/phpstan": "^1.11 || ^2.0" },
-    "autoload": { "psr-4": { "LombokClarion\\PHPStanRules\\": "src/" } },
-    "extra": { "phpstan": { "includes": ["extension.neon"] } }
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\PHPStanRules\\": "src/"
+        }
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
+        }
+    },
+    "suggest": {
+        "phpstan/phpstan": "^1.11 || ^2.0 — only when installing PHPStan via Composer. The framework's own gate runs the pinned PHAR instead (see .github/workflows/ci.yml); the rules need nothing but class autoloading, so with the PHAR simply add `includes: vendor/lombokclarion/phpstan-rules/extension.neon` to your phpstan.neon. Keeping this out of `require` is what lets the package install in air-gapped / no-Packagist environments (U-S1-2)."
+    }
 }
