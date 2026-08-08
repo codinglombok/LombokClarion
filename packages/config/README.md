@@ -13,7 +13,7 @@ composer require lombokclarion/config
 
 ## Namespace
 
-```
+```php
 LombokClarion\Config
 ```
 

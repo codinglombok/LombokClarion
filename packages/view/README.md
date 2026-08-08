@@ -13,7 +13,7 @@ composer require lombokclarion/view
 
 ## Namespace
 
-```
+```php
 LombokClarion\View
 ```
 

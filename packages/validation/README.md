@@ -13,7 +13,7 @@ composer require lombokclarion/validation
 
 ## Namespace
 
-```
+```php
 LombokClarion\Validation
 ```
 

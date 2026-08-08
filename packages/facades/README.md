@@ -15,7 +15,7 @@ composer require lombokclarion/facades
 
 ## Namespace
 
-```
+```php
 LombokClarion\Facades
 ```
 

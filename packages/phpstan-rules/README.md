@@ -13,7 +13,7 @@ composer require lombokclarion/phpstan-rules
 
 ## Namespace
 
-```
+```php
 LombokClarion\PHPStanRules
 ```
 

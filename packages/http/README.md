@@ -13,7 +13,7 @@ composer require lombokclarion/http
 
 ## Namespace
 
-```
+```php
 LombokClarion\Http
 ```
 

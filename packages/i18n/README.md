@@ -13,7 +13,7 @@ composer require lombokclarion/i18n
 
 ## Namespace
 
-```
+```php
 LombokClarion\I18n
 ```
 

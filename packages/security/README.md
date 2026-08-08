@@ -13,7 +13,7 @@ composer require lombokclarion/security
 
 ## Namespace
 
-```
+```php
 LombokClarion\Security
 ```
 

@@ -13,7 +13,7 @@ composer require lombokclarion/log
 
 ## Namespace
 
-```
+```php
 LombokClarion\Log
 ```
 

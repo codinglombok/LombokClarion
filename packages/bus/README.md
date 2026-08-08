@@ -13,7 +13,7 @@ composer require lombokclarion/bus
 
 ## Namespace
 
-```
+```php
 LombokClarion\Bus
 ```
 

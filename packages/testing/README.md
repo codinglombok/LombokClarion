@@ -13,7 +13,7 @@ composer require lombokclarion/testing
 
 ## Namespace
 
-```
+```php
 LombokClarion\Testing
 ```
 

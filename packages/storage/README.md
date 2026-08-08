@@ -13,7 +13,7 @@ composer require lombokclarion/storage
 
 ## Namespace
 
-```
+```php
 LombokClarion\Storage
 ```
 

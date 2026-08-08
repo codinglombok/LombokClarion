@@ -13,7 +13,7 @@ composer require lombokclarion/auth
 
 ## Namespace
 
-```
+```php
 LombokClarion\Auth
 ```
 

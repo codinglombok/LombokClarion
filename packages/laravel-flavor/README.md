@@ -15,7 +15,7 @@ composer require lombokclarion/laravel-flavor
 
 ## Namespace
 
-```
+```php
 LombokClarion\LaravelFlavor
 ```
 
