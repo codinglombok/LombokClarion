@@ -1,0 +1,27 @@
+{
+    "name": "lombokclarion/cache",
+    "description": "Cache abstraction with file, database, array, and null drivers. Interface-first so a Redis or Memcached driver is one class away — never a core dependency.",
+    "type": "library",
+    "keywords": [
+        "cache",
+        "lombokclarion"
+    ],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3"
+    },
+    "suggest": {
+        "lombokclarion/persistence": "Required for the DatabaseCacheDriver."
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Cache\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2.x-dev"
+        }
+    }
+}

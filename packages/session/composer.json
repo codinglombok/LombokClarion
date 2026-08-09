@@ -1,0 +1,20 @@
+{
+    "name": "lombokclarion/session",
+    "description": "Server-side sessions with file and database handlers. Cookie-based ID, CSRF integration, flash data.",
+    "type": "library",
+    "keywords": ["session", "lombokclarion"],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/http": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Session\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": { "dev-main": "2.2.x-dev" }
+    }
+}

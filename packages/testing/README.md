@@ -1,6 +1,6 @@
 # lombokclarion/testing
 
-**InMemoryRepository, FakeCommandBus/EventBus, HttpTestCase, ColdStartTest.**
+**Test doubles, HTTP/Console test cases, cold-start budget enforcement.**
 
 > **[READ-ONLY]** This is a subtree split of the [LombokClarion](https://github.com/codinglombok/LombokClarion) monorepo.  
 > Do not send pull requests here — contribute to the [main repository](https://github.com/codinglombok/LombokClarion) instead.
@@ -8,7 +8,7 @@
 ## Install
 
 ```bash
-composer require lombokclarion/testing
+composer require --dev lombokclarion/testing
 ```
 
 ## Namespace
@@ -17,14 +17,40 @@ composer require lombokclarion/testing
 LombokClarion\Testing
 ```
 
-## Requirements
+## What's Inside
 
-- PHP >=8.3
-- [lombokclarion/container](https://github.com/codinglombok/container)
-- [lombokclarion/http](https://github.com/codinglombok/http)
-- [lombokclarion/routing](https://github.com/codinglombok/routing)
-- [lombokclarion/bus](https://github.com/codinglombok/bus)
-- [lombokclarion/console](https://github.com/codinglombok/console)
+| Class | Role |
+|-------|------|
+| `HttpTestCase` | Boots real container + explicit `override()` for integration tests |
+| `ConsoleTestCase` | Runs CLI commands and asserts output/exit code |
+| `BenchmarkTestCase` | Measures execution time against a budget |
+| `ColdStartTest` | Fails when cold-start boot exceeds budget (~5ms) |
+| `FakeCommandBus` | Records dispatched commands without handling them |
+| `FakeEventBus` | Records dispatched events without notifying listeners |
+| `InMemoryRepository` | Generic in-memory repository for domain tests |
+
+## Usage
+
+```php
+use LombokClarion\Testing\HttpTestCase;
+
+class WidgetTest extends HttpTestCase {
+    public function testCreateWidget(): void {
+        $this->override(WidgetRepository::class, new InMemoryRepository());
+        $response = $this->post('/api/widgets', ['name' => 'Test']);
+        $this->assertStatus($response, 201);
+    }
+}
+
+// Fake bus (unit test)
+$bus = new FakeCommandBus();
+$bus->dispatch(new CreateWidget('Gadget'));
+$bus->assertDispatched(CreateWidget::class);
+
+// Cold-start test (in CI)
+$test = new ColdStartTest(budgetMs: 5.0);
+$test->run(); // fails if boot exceeds 5ms
+```
 
 ## License
 

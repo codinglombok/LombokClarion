@@ -1,0 +1,22 @@
+{
+    "name": "lombokclarion/cloud-storage",
+    "description": "S3 and GCS drivers for the Storage interface. Uses native curl — no vendor SDK dependency.",
+    "type": "library",
+    "keywords": ["s3", "gcs", "cloud", "storage", "lombokclarion"],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "lombokclarion/storage": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\CloudStorage\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": { "dev-main": "2.2.x-dev" }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "name": "lombokclarion/scheduler",
+    "description": "Cron-like task scheduler. Define recurring tasks in PHP, run with a single system cron entry pointing at `bin/lombokclarion schedule:run`.",
+    "type": "library",
+    "keywords": ["scheduler", "cron", "lombokclarion"],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/console": "*",
+        "lombokclarion/log": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Scheduler\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": { "dev-main": "2.2.x-dev" }
+    }
+}

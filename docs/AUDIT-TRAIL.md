@@ -680,8 +680,7 @@ target (`storage/app/*`) alongside the already-excluded compiled artifacts.
 
 ## Stage 15 — upstream consumer fixes (InakSasambo)
 
-The first real consumer application — InakSasambo (sistem informasi pengelolaan
-Ditresnarkoba Polda NTB), running LombokClarion on live institutional work —
+The first real consumer application — running LombokClarion on live institutional work —
 exercised the framework end-to-end and reported nine targeted hazards and gaps.
 All nine are now closed:
 

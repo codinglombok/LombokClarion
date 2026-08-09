@@ -1,0 +1,21 @@
+{
+    "name": "lombokclarion/inertia",
+    "description": "Server-side adapter for Inertia.js SPA protocol. Render SPA page components from PHP controllers with shared data and version checking.",
+    "type": "library",
+    "keywords": ["inertia", "spa", "lombokclarion"],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/http": "*",
+        "lombokclarion/view": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Inertia\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": { "dev-main": "2.2.x-dev" }
+    }
+}

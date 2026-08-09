@@ -1,0 +1,20 @@
+{
+    "name": "lombokclarion/vite",
+    "description": "Vite dev-server integration and production manifest reading for view templates. Tag helpers for scripts and styles.",
+    "type": "library",
+    "keywords": ["vite", "frontend", "lombokclarion"],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/view": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Vite\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": { "dev-main": "2.2.x-dev" }
+    }
+}

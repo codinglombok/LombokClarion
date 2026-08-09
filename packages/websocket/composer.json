@@ -1,0 +1,21 @@
+{
+    "name": "lombokclarion/websocket",
+    "description": "WebSocket server abstractions: connection manager, rooms, auth integration. Bring your own event loop (Swoole, ReactPHP, Workerman).",
+    "type": "library",
+    "keywords": ["websocket", "realtime", "lombokclarion"],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/http": "*",
+        "lombokclarion/auth": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\WebSocket\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": { "dev-main": "2.2.x-dev" }
+    }
+}

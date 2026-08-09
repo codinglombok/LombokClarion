@@ -1,6 +1,6 @@
 # lombokclarion/laravel-flavor
 
-**Optional preset enabling facades + ActiveRecord + default middleware in one call.**
+**Laravel-familiar preset: Auth/DB static access, `config()` and `env()` helpers.**
 
 > **[READ-ONLY]** This is a subtree split of the [LombokClarion](https://github.com/codinglombok/LombokClarion) monorepo.  
 > Do not send pull requests here — contribute to the [main repository](https://github.com/codinglombok/LombokClarion) instead.
@@ -11,24 +11,41 @@
 composer require lombokclarion/laravel-flavor
 ```
 
-> This is an opt-in package — not loaded by default.
-
 ## Namespace
 
 ```php
 LombokClarion\LaravelFlavor
 ```
 
-## Requirements
+## What's Inside
 
-- PHP >=8.3
-- ext-pdo
-- [lombokclarion/container](https://github.com/codinglombok/container)
-- [lombokclarion/facades](https://github.com/codinglombok/facades)
-- [lombokclarion/active-record](https://github.com/codinglombok/active-record)
-- [lombokclarion/persistence](https://github.com/codinglombok/persistence)
-- [lombokclarion/auth](https://github.com/codinglombok/auth)
-- [lombokclarion/security](https://github.com/codinglombok/security)
+| Class | Role |
+|-------|------|
+| `LaravelFlavor` | Boot helper: wires facades, registers helpers, binds Auth/DB |
+| `Auth` | Static auth: `Auth::user()`, `Auth::check()`, `Auth::login()` |
+| `DB` | Static query: `DB::table('x')`, `DB::select()`, `DB::insert()` |
+
+## Usage
+
+```php
+use LombokClarion\LaravelFlavor\LaravelFlavor;
+
+// Bootstrap (once)
+LaravelFlavor::boot($container);
+
+// Then use familiar patterns:
+use LombokClarion\LaravelFlavor\Auth;
+use LombokClarion\LaravelFlavor\DB;
+
+$user = Auth::user();
+if (Auth::check()) { /* ... */ }
+
+$widgets = DB::table('widgets')
+    ->where('status', '=', 'active')
+    ->get();
+```
+
+> **Note:** This package is for teams migrating from Laravel. It wraps the same underlying services (AuthManager, QueryBuilder) with static access. The domain layer remains framework-free.
 
 ## License
 

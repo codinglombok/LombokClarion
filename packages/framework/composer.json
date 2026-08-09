@@ -26,11 +26,21 @@
         "lombokclarion/storage": "*",
         "lombokclarion/active-record": "*",
         "lombokclarion/facades": "*",
-        "lombokclarion/laravel-flavor": "*"
+        "lombokclarion/laravel-flavor": "*",
+        "lombokclarion/cache": "*",
+        "lombokclarion/mail": "*",
+        "lombokclarion/session": "*",
+        "lombokclarion/notification": "*",
+        "lombokclarion/scheduler": "*",
+        "lombokclarion/broadcasting": "*"
     },
     "suggest": {
         "lombokclarion/testing": "Test doubles + Http/Console test cases + the cold-start budget check. Belongs in your app's require-dev, not a production install.",
-        "lombokclarion/phpstan-rules": "PHPStan extension enforcing the SQL-injection and domain-boundary rules. A dev/CI tool — add to require-dev."
+        "lombokclarion/phpstan-rules": "PHPStan extension enforcing the SQL-injection and domain-boundary rules. A dev/CI tool — add to require-dev.",
+        "lombokclarion/websocket": "WebSocket server abstractions — bring your own event loop (Swoole, ReactPHP).",
+        "lombokclarion/vite": "Vite frontend build integration for view templates.",
+        "lombokclarion/inertia": "Inertia.js server-side adapter for SPA pages.",
+        "lombokclarion/cloud-storage": "S3/GCS cloud storage drivers — requires ext-curl."
     },
     "extra": {
         "branch-alias": {

@@ -1,0 +1,21 @@
+{
+    "name": "lombokclarion/broadcasting",
+    "description": "Event broadcasting to WebSocket/SSE channels. Redis pub/sub, database, log, and null drivers.",
+    "type": "library",
+    "keywords": ["broadcasting", "realtime", "lombokclarion"],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/bus": "*",
+        "lombokclarion/auth": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Broadcasting\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": { "dev-main": "2.2.x-dev" }
+    }
+}

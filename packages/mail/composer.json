@@ -1,0 +1,21 @@
+{
+    "name": "lombokclarion/mail",
+    "description": "Mail abstraction: Mailable value objects, SMTP/sendmail/log transports. No vendor SDK — a SES/Mailgun transport is one class implementing Transport.",
+    "type": "library",
+    "keywords": ["mail", "smtp", "lombokclarion"],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/codinglombok/LombokClarion",
+    "require": {
+        "php": ">=8.3",
+        "lombokclarion/view": "*",
+        "lombokclarion/log": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LombokClarion\\Mail\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": { "dev-main": "2.2.x-dev" }
+    }
+}
