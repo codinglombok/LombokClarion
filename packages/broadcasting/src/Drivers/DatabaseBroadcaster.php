@@ -7,18 +7,17 @@ namespace LombokClarion\Broadcasting\Drivers;
 use LombokClarion\Broadcasting\Broadcaster;
 use PDO;
 
-/**
- * Stores broadcast events in a database table. Clients poll or use SSE
- * to read new events. Suitable for moderate traffic without Redis.
- */
 final class DatabaseBroadcaster implements Broadcaster
 {
     private bool $tableCreated = false;
+    private string $quotedTable;
 
     public function __construct(
         private readonly PDO $pdo,
         private readonly string $table = 'lc_broadcasts',
     ) {
+        // Quote the table name to safely handle it in SQL
+        $this->quotedTable = '`' . str_replace('`', '``', $this->table) . '`';
     }
 
     public function broadcast(array $channels, string $event, array $payload): void
@@ -26,7 +25,7 @@ final class DatabaseBroadcaster implements Broadcaster
         $this->ensureTable();
 
         $stmt = $this->pdo->prepare(
-            "INSERT INTO {$this->table} (id, channel, event, payload, created_at) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO {$this->quotedTable} (id, channel, event, payload, created_at) VALUES (?, ?, ?, ?, ?)"
         );
 
         $now = date('Y-m-d H:i:s');
@@ -43,25 +42,20 @@ final class DatabaseBroadcaster implements Broadcaster
         }
     }
 
-    /**
-     * Fetch broadcast events for a channel since a given ID.
-     *
-     * @return list<array{id: string, event: string, payload: array<mixed>, created_at: string}>
-     */
     public function since(string $channel, ?string $afterId = null, int $limit = 100): array
     {
         $this->ensureTable();
 
         if ($afterId !== null) {
             $stmt = $this->pdo->prepare(
-                "SELECT id, event, payload, created_at FROM {$this->table} "
-                . "WHERE channel = ? AND rowid > (SELECT rowid FROM {$this->table} WHERE id = ?) "
+                "SELECT id, event, payload, created_at FROM {$this->quotedTable} "
+                . "WHERE channel = ? AND rowid > (SELECT rowid FROM {$this->quotedTable} WHERE id = ?) "
                 . "ORDER BY rowid ASC LIMIT ?"
             );
             $stmt->execute([$channel, $afterId, $limit]);
         } else {
             $stmt = $this->pdo->prepare(
-                "SELECT id, event, payload, created_at FROM {$this->table} "
+                "SELECT id, event, payload, created_at FROM {$this->quotedTable} "
                 . "WHERE channel = ? ORDER BY rowid DESC LIMIT ?"
             );
             $stmt->execute([$channel, $limit]);
@@ -75,14 +69,11 @@ final class DatabaseBroadcaster implements Broadcaster
         }, $rows);
     }
 
-    /**
-     * Remove events older than $seconds.
-     */
     public function gc(int $seconds = 86400): int
     {
         $this->ensureTable();
         $threshold = date('Y-m-d H:i:s', time() - $seconds);
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE created_at < ?");
+        $stmt = $this->pdo->prepare("DELETE FROM {$this->quotedTable} WHERE created_at < ?");
         $stmt->execute([$threshold]);
         return $stmt->rowCount();
     }
@@ -93,7 +84,7 @@ final class DatabaseBroadcaster implements Broadcaster
             return;
         }
         $this->pdo->exec(
-            "CREATE TABLE IF NOT EXISTS {$this->table} ("
+            "CREATE TABLE IF NOT EXISTS {$this->quotedTable} ("
             . "id VARCHAR(32) NOT NULL PRIMARY KEY, "
             . "channel VARCHAR(255) NOT NULL, "
             . "event VARCHAR(255) NOT NULL, "

@@ -70,7 +70,7 @@ php tests/run-all.php
 ## Layout
 
 ```
-packages/                                    20 packages
+packages/ 20 packages
   container/       LombokClarion\Container      — DI container + AOT compiler
   http/            LombokClarion\Http           — Request/Response/Middleware/ErrorHandler
   routing/         LombokClarion\Routing        — Router, Kernel, runtime adapters
@@ -161,7 +161,7 @@ curl -X POST localhost:8080/api/widgets -d name=Lamp -d price_cents=1500
 ## Design requirements mapping
 
 | Section | Requirement | Where |
-|----|---|---|
+| --- | --- | --- |
 | 2.1-2.6 | No auto-discovery, explicit config, magic opt-in only | Core packages never use facades; `lombokclarion/facades` is opt-in with `forbidden-layers: [app/Domain]`; every binding is in `bootstrap/services.php` |
 | 3 | Container to Router to Middleware to Container to Controller to Bus to Domain to Repository flow | `packages/routing/src/Kernel.php` |
 | 3 | Domain layer zero framework imports, CI-enforced | `app/Domain/Widget/*` + `bin/check-domain-boundary.php` (passing; verified it also *fails* on a deliberately-introduced violation) |
