@@ -73,8 +73,12 @@ final class DatabaseBroadcaster implements Broadcaster
     {
         $this->ensureTable();
         $threshold = date('Y-m-d H:i:s', time() - $seconds);
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->quotedTable} WHERE created_at < ?");
-        $stmt->execute([$threshold]);
+    //    $stmt = $this->pdo->prepare("DELETE FROM {$this->quotedTable} WHERE created_at < ?");
+     //   $stmt->execute([$threshold]);
+        // Line 76 - FIXED
+$sql = "DELETE FROM " . $this->quotedTable . " WHERE created_at < ?";
+$stmt = $this->pdo->prepare($sql);
+$stmt->execute([$threshold]);
         return $stmt->rowCount();
     }
 
@@ -83,15 +87,27 @@ final class DatabaseBroadcaster implements Broadcaster
         if ($this->tableCreated) {
             return;
         }
-        $this->pdo->exec(
-            "CREATE TABLE IF NOT EXISTS {$this->quotedTable} ("
-            . "id VARCHAR(32) NOT NULL PRIMARY KEY, "
-            . "channel VARCHAR(255) NOT NULL, "
-            . "event VARCHAR(255) NOT NULL, "
-            . "payload TEXT NOT NULL, "
-            . "created_at TEXT NOT NULL"
-            . ")"
-        );
+      //  $this->pdo->exec(
+     //       "CREATE TABLE IF NOT EXISTS {$this->quotedTable} ("
+     //       . "id VARCHAR(32) NOT NULL PRIMARY KEY, "
+     //       . "channel VARCHAR(255) NOT NULL, "
+     //       . "event VARCHAR(255) NOT NULL, "
+    //        . "payload TEXT NOT NULL, "
+     //       . "created_at TEXT NOT NULL"
+     //       . ")"
+     //   );
+        // Line 86 - FIXED
+     $sql = "CREATE TABLE IF NOT EXISTS " . $this->quotedTable . " ("
+    . "id VARCHAR(32) NOT NULL PRIMARY KEY, "
+    . "channel VARCHAR(255) NOT NULL, "
+    . "event VARCHAR(255) NOT NULL, "
+    . "payload TEXT NOT NULL, "
+    . "created_at TEXT NOT NULL"
+    . ")";
+$this->pdo->exec($sql);
         $this->tableCreated = true;
     }
 }
+
+
+
