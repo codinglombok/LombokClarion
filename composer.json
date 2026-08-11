@@ -22,13 +22,24 @@
         "lombokclarion/auth": "*",
         "lombokclarion/laravel-flavor": "*",
         "lombokclarion/validation": "*",
-        "lombokclarion/storage": "*"
+        "lombokclarion/storage": "*",
+        "lombokclarion/cache": "*",
+        "lombokclarion/mail": "*",
+        "lombokclarion/session": "*",
+        "lombokclarion/notification": "*",
+        "lombokclarion/scheduler": "*",
+        "lombokclarion/broadcasting": "*"
     },
     "require-dev": {
         "lombokclarion/testing": "*",
         "lombokclarion/active-record": "*",
         "lombokclarion/facades": "*",
-        "lombokclarion/i18n": "*"
+        "lombokclarion/i18n": "*",
+        "lombokclarion/websocket": "*",
+        "lombokclarion/vite": "*",
+        "lombokclarion/inertia": "*",
+        "lombokclarion/cloud-storage": "*",
+        "lombokclarion/table-sheet": "*"
     },
     "repositories": [
         {
@@ -116,6 +127,50 @@
         {
             "type": "path",
             "url": "packages/log"
+        },
+        {
+            "type": "path",
+            "url": "packages/cache"
+        },
+        {
+            "type": "path",
+            "url": "packages/mail"
+        },
+        {
+            "type": "path",
+            "url": "packages/session"
+        },
+        {
+            "type": "path",
+            "url": "packages/notification"
+        },
+        {
+            "type": "path",
+            "url": "packages/websocket"
+        },
+        {
+            "type": "path",
+            "url": "packages/vite"
+        },
+        {
+            "type": "path",
+            "url": "packages/inertia"
+        },
+        {
+            "type": "path",
+            "url": "packages/cloud-storage"
+        },
+        {
+            "type": "path",
+            "url": "packages/scheduler"
+        },
+        {
+            "type": "path",
+            "url": "packages/broadcasting"
+        },
+        {
+            "type": "path",
+            "url": "packages/table-sheet"
         }
     ],
     "autoload": {

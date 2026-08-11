@@ -754,3 +754,48 @@ src/
 - **250 PHP source files** (was 188)
 - **22 runtime packages** in `lombokclarion/framework` metapackage
 - **4 suggested packages** (websocket, vite, inertia, cloud-storage)
+
+---
+
+## 18. `table-sheet` — Vendored Package (Stage 18.1)
+
+**Not a Stage 18 original build — vendored verbatim from the upstream sibling repo.**
+
+| Field | Value |
+|---|---|
+| Source | `github.com/codinglombok/LombokTableSheet` tag `v1.0.1`, subpath `ports/php` |
+| Fetched via | `codeload.github.com` tarball (`archive/refs/tags/v1.0.1.tar.gz`) |
+| Namespace | `Lombok\TableSheet\*` — **preserved as-is**, NOT renamed to `LombokClarion\*` |
+| Autoload | `classmap` (matches upstream), not PSR-4 |
+| Consumption model | **Fallback/cadangan path only.** Primary path remains the external `lomboktablesheet` npm/Packagist package (per directive 2026-07-22). This vendored copy exists because the upstream repo, at the time of vendoring, had no Packagist release — teams needing a native Composer dependency without a JS toolchain use this instead. |
+| Mirror status | **Does NOT get a `codinglombok/table-sheet` split-mirror.** The canonical repo already exists at `codinglombok/LombokTableSheet` — mirroring again would create a confusing duplicate. Stays internal-only via the monorepo path-repository. |
+| Tests | Upstream's own PHPUnit suite (27 tests, 59 assertions) — kept as PHPUnit, NOT converted to LombokClarion's custom harness, since this is vendored code, not framework-native code. |
+
+```
+packages/table-sheet/
+├── composer.json          — name lombokclarion/table-sheet, classmap autoload, extra.vendored-from
+├── README.md               — rewritten intro (vendored context), rest verbatim from upstream
+├── LICENSE                 — copied from upstream (Apache-2.0)
+├── phpunit.xml             — copied from upstream
+├── autoload.php            — copied from upstream (classmap bootstrap, no network needed)
+├── src/
+│   ├── Core/
+│   │   ├── Model.php        — Cell, CellRef, Sheet, Workbook (169 lines)
+│   │   ├── Formula.php      — tokenizer → Pratt parser → AST → evaluator, no eval() (553 lines)
+│   │   └── SplitMerge.php   — row/column split-merge (97 lines)
+│   └── Formats/
+│       ├── CsvCodec.php     — RFC-4180 via native fgetcsv/fputcsv (89 lines)
+│       └── JsonCodec.php    — JSON + Markdown codecs (107 lines)
+└── tests/
+    ├── ModelTest.php
+    ├── FormulaTest.php
+    ├── SplitMergeTest.php
+    ├── FormatsTest.php
+    └── SecurityTest.php
+```
+
+**Not ported** (matches the TS roadmap stage this was ported at, per upstream README): DOM/editable Sheet adapters (no DOM in PHP — consumer uses this as a data/export engine), XLSX codec, i18n formatting layer, templates.
+
+**Root `composer.json`**: added to `require-dev` (opt-in, not a hard runtime dependency — matches its "fallback path" role).
+
+**`lombokclarion/framework` metapackage**: added to `suggest`, not `require` — same reasoning.

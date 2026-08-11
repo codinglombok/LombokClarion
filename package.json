@@ -8,13 +8,15 @@
     "url": "https://github.com/codinglombok/lombokclarion"
   },
   "devDependencies": {
-    "lombok-charts": "^0.1.0"
+    "lombok-charts": "^0.1.0",
+    "lombok-qrcode": "^0.1.0"
   },
   "scripts": {
     "assets:update:charts": "cp node_modules/lombok-charts/dist/lombok-charts.umd.min.js resources/lombokcharts/",
     "assets:update:css": "curl -sL https://raw.githubusercontent.com/codinglombok/LombokCSS/main/dist/lombok.min.css -o resources/lombokcss/lombok.min.css",
-    "assets:update": "npm run assets:update:charts && npm run assets:update:css",
-    "test": "php tests/run-all.php"
+    "assets:update": "npm run assets:update:charts && npm run assets:update:css && npm run assets:update:qrcode",
+    "test": "php tests/run-all.php",
+    "assets:update:qrcode": "cp node_modules/lombok-qrcode/dist/lombok-qrcode.umd.min.js resources/lombokqrcode/"
   },
   "files": [
     "resources/",

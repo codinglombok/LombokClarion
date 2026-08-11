@@ -8,13 +8,19 @@
 #   - Repository secret SPLIT_TOKEN: a GitHub PAT (classic) with `repo` scope
 #     owned by a machine user (or your own account) that has push access to all
 #     20 codinglombok/<pkg> mirror repos.
-#   - The 20 mirror repos must exist (empty is fine). Create them once:
+#   - The 30 mirror repos must exist (empty is fine). Create the original 20 once,
+#     then the 10 Stage 18 additions:
 #       for pkg in active-record auth bus config console container facades \
 #                  framework http i18n laravel-flavor log persistence \
-#                  phpstan-rules routing security storage testing validation view; do
+#                  phpstan-rules routing security storage testing validation view \
+#                  cache mail session notification websocket vite inertia \
+#                  cloud-storage scheduler broadcasting; do
 #         gh repo create "codinglombok/$pkg" --public --description \
 #           "[READ-ONLY] Subtree split of lombokclarion/$pkg — do not send PRs here."
 #       done
+#   - lombokclarion/table-sheet is a vendored copy of the already-canonical
+#     codinglombok/LombokTableSheet repo — it does NOT get a mirror. Consume it
+#     via the monorepo path-repository only (composer.json require-dev).
 
 name: Split Packages
 
@@ -73,7 +79,23 @@ jobs:
             testing
             validation
             view
+            cache
+            mail
+            session
+            notification
+            websocket
+            vite
+            inertia
+            cloud-storage
+            scheduler
+            broadcasting
           )
+          # NOTE: lombokclarion/table-sheet is intentionally NOT in this list.
+          # It is a vendored copy of github.com/codinglombok/LombokTableSheet
+          # (ports/php, v1.0.1) — that repo is already its own canonical source.
+          # Splitting it to codinglombok/table-sheet would create a confusing
+          # duplicate. It stays internal-only: usable via the monorepo's path
+          # repository, never published as its own Packagist package.
 
           # Detect whether this is a tag push
           TAG=""

@@ -40,7 +40,8 @@
         "lombokclarion/websocket": "WebSocket server abstractions — bring your own event loop (Swoole, ReactPHP).",
         "lombokclarion/vite": "Vite frontend build integration for view templates.",
         "lombokclarion/inertia": "Inertia.js server-side adapter for SPA pages.",
-        "lombokclarion/cloud-storage": "S3/GCS cloud storage drivers — requires ext-curl."
+        "lombokclarion/cloud-storage": "S3/GCS cloud storage drivers — requires ext-curl.",
+        "lombokclarion/table-sheet": "Vendored PHP port of LombokTableSheet (namespace Lombok\\TableSheet\\*) — fallback path; primary consumption is the external lomboktablesheet npm/Packagist library."
     },
     "extra": {
         "branch-alias": {

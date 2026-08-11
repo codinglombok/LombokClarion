@@ -18,8 +18,8 @@ manifest file.
 
 This repo contains **working, tested code** (377 tests, 0 failures) plus a
 small end-to-end example app (a Widget CRUD feature) wiring all packages
-together. It is not a drop-in `composer create-project` package yet —  —
-Every piece that exists actually runs, and is covered by tests that
+together. It is not a drop-in `composer create-project` package yet,
+every piece that exists actually runs, and is covered by tests that
 actually run (377 tests, 0 failures, see "Running the tests").
 
 ## Installing / consuming the packages
@@ -32,7 +32,7 @@ composer require lombokclarion/framework
 ```
 
 `lombokclarion/framework` installs the full runtime (including the opt-in magic
-packages — requiring it is itself the explicit choice). It
+packages — requiring it is itself the explicit opt-in choice). It
 leaves out the two dev-only packages, which you add to require-dev yourself:
 
 ```bash
