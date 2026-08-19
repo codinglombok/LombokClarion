@@ -1,22 +1,24 @@
 {
   "name": "lombokclarion",
   "version": "1.0.0",
-  "description": "Frontend asset tooling for LombokClarion (PHP framework). CSS/JS are vendored under resources/ and content-hashed by `php bin/lombokclarion optimize` \u2014 npm is only used to refresh the vendored dist files.",
+  "description": "Frontend asset tooling for LombokClarion (PHP framework). CSS/JS are vendored under resources/ and content-hashed by `php bin/lombokclarion optimize` — npm is only used to refresh the vendored dist files.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/codinglombok/lombokclarion"
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "lombok-charts": "^0.1.0",
-    "lombok-qrcode": "^0.1.0"
+    "lombokqrcode": "^0.1.0",
+    "typescript": "^7.0.2"
   },
   "scripts": {
     "assets:update:charts": "cp node_modules/lombok-charts/dist/lombok-charts.umd.min.js resources/lombokcharts/",
     "assets:update:css": "curl -sL https://raw.githubusercontent.com/codinglombok/LombokCSS/main/dist/lombok.min.css -o resources/lombokcss/lombok.min.css",
     "assets:update": "npm run assets:update:charts && npm run assets:update:css && npm run assets:update:qrcode",
     "test": "php tests/run-all.php",
-    "assets:update:qrcode": "cp node_modules/lombok-qrcode/dist/lombok-qrcode.umd.min.js resources/lombokqrcode/"
+    "assets:update:qrcode": "esbuild node_modules/lombokqrcode/dist/index.mjs --bundle --format=iife --global-name=LombokQRCode --minify --outfile=resources/lombokqrcode/lombokqrcode.umd.min.js"
   },
   "files": [
     "resources/",
@@ -34,5 +36,8 @@
     "lombokclarion",
     "explicit",
     "serverless"
-  ]
+  ],
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
 }
