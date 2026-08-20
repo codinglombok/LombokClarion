@@ -1,188 +1,105 @@
 {
-    "name": "lombokclarion/app",
-    "description": "LombokClarion application skeleton (framework monorepo + example app).",
+    "name": "lombokclarion/lombokclarion",
+    "description": "LombokClarion — PHP 8.3+ full-stack framework. Explicit over magic: no auto-discovery, AOT-compiled DI container, edge/serverless-first, domain layer with zero framework imports.",
     "type": "project",
+    "keywords": [
+        "php",
+        "framework",
+        "explicit",
+        "di-container",
+        "routing",
+        "persistence",
+        "serverless",
+        "edge",
+        "php83"
+    ],
+    "homepage": "https://codinglombok.github.io/LombokClarion/",
     "license": "Apache-2.0",
-    "require": {
-        "php": ">=8.3",
-        "ext-pdo": "*",
-        "ext-openssl": "*",
-        "ext-mbstring": "*",
-        "ext-fileinfo": "*",
-        "lombokclarion/container": "*",
-        "lombokclarion/http": "*",
-        "lombokclarion/routing": "*",
-        "lombokclarion/bus": "*",
-        "lombokclarion/config": "*",
-        "lombokclarion/persistence": "*",
-        "lombokclarion/view": "*",
-        "lombokclarion/console": "*",
-        "lombokclarion/log": "*",
-        "lombokclarion/security": "*",
-        "lombokclarion/auth": "*",
-        "lombokclarion/laravel-flavor": "*",
-        "lombokclarion/validation": "*",
-        "lombokclarion/storage": "*",
-        "lombokclarion/cache": "*",
-        "lombokclarion/mail": "*",
-        "lombokclarion/session": "*",
-        "lombokclarion/notification": "*",
-        "lombokclarion/scheduler": "*",
-        "lombokclarion/broadcasting": "*"
-    },
-    "require-dev": {
-        "lombokclarion/testing": "*",
-        "lombokclarion/active-record": "*",
-        "lombokclarion/facades": "*",
-        "lombokclarion/i18n": "*",
-        "lombokclarion/websocket": "*",
-        "lombokclarion/vite": "*",
-        "lombokclarion/inertia": "*",
-        "lombokclarion/cloud-storage": "*",
-        "lombokclarion/table-sheet": "*"
-    },
-    "repositories": [
+    "authors": [
         {
-            "type": "path",
-            "url": "packages/container"
-        },
-        {
-            "type": "path",
-            "url": "packages/http"
-        },
-        {
-            "type": "path",
-            "url": "packages/routing"
-        },
-        {
-            "type": "path",
-            "url": "packages/bus"
-        },
-        {
-            "type": "path",
-            "url": "packages/config"
-        },
-        {
-            "type": "path",
-            "url": "packages/persistence"
-        },
-        {
-            "type": "path",
-            "url": "packages/view"
-        },
-        {
-            "type": "path",
-            "url": "packages/console"
-        },
-        {
-            "type": "path",
-            "url": "packages/security"
-        },
-        {
-            "type": "path",
-            "url": "packages/testing"
-        },
-        {
-            "type": "path",
-            "url": "packages/active-record"
-        },
-        {
-            "type": "path",
-            "url": "packages/facades"
-        },
-        {
-            "type": "path",
-            "url": "packages/i18n"
-        },
-        {
-            "type": "path",
-            "url": "packages/phpstan-rules"
-        },
-        {
-            "type": "path",
-            "url": "packages/auth"
-        },
-        {
-            "type": "path",
-            "url": "packages/laravel-flavor",
-            "options": {
-                "symlink": true
-            }
-        },
-        {
-            "type": "path",
-            "url": "packages/validation",
-            "options": {
-                "symlink": true
-            }
-        },
-        {
-            "type": "path",
-            "url": "packages/storage"
-        },
-        {
-            "type": "path",
-            "url": "packages/framework"
-        },
-        {
-            "type": "path",
-            "url": "packages/log"
-        },
-        {
-            "type": "path",
-            "url": "packages/cache"
-        },
-        {
-            "type": "path",
-            "url": "packages/mail"
-        },
-        {
-            "type": "path",
-            "url": "packages/session"
-        },
-        {
-            "type": "path",
-            "url": "packages/notification"
-        },
-        {
-            "type": "path",
-            "url": "packages/websocket"
-        },
-        {
-            "type": "path",
-            "url": "packages/vite"
-        },
-        {
-            "type": "path",
-            "url": "packages/inertia"
-        },
-        {
-            "type": "path",
-            "url": "packages/cloud-storage"
-        },
-        {
-            "type": "path",
-            "url": "packages/scheduler"
-        },
-        {
-            "type": "path",
-            "url": "packages/broadcasting"
-        },
-        {
-            "type": "path",
-            "url": "packages/table-sheet"
+            "name": "codinglombok",
+            "homepage": "https://github.com/codinglombok",
+            "role": "Developer"
         }
     ],
+    "require": {
+        "php": ">=8.3",
+        "ext-fileinfo": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "lombokclarion/auth": "*",
+        "lombokclarion/bus": "*",
+        "lombokclarion/config": "*",
+        "lombokclarion/console": "*",
+        "lombokclarion/container": "*",
+        "lombokclarion/http": "*",
+        "lombokclarion/log": "*",
+        "lombokclarion/persistence": "*",
+        "lombokclarion/routing": "*",
+        "lombokclarion/security": "*",
+        "lombokclarion/storage": "*",
+        "lombokclarion/validation": "*",
+        "lombokclarion/view": "*"
+    },
+    "require-dev": {
+        "lombokclarion/active-record": "*",
+        "lombokclarion/facades": "*",
+        "lombokclarion/laravel-flavor": "*",
+        "lombokclarion/i18n": "*",
+        "lombokclarion/testing": "*",
+        "lombokclarion/phpstan-rules": "*"
+    },
     "autoload": {
         "psr-4": {
             "App\\": "app/"
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload-dev": {
         "psr-4": {
-            "LombokClarion\\PHPStanRules\\": "packages/phpstan-rules/src/"
+            "Tests\\": "tests/"
+        }
+    },
+    "repositories": [
+        { "type": "path", "url": "packages/container",    "options": { "symlink": true } },
+        { "type": "path", "url": "packages/http",         "options": { "symlink": true } },
+        { "type": "path", "url": "packages/routing",      "options": { "symlink": true } },
+        { "type": "path", "url": "packages/bus",          "options": { "symlink": true } },
+        { "type": "path", "url": "packages/config",       "options": { "symlink": true } },
+        { "type": "path", "url": "packages/persistence",  "options": { "symlink": true } },
+        { "type": "path", "url": "packages/view",         "options": { "symlink": true } },
+        { "type": "path", "url": "packages/console",      "options": { "symlink": true } },
+        { "type": "path", "url": "packages/security",     "options": { "symlink": true } },
+        { "type": "path", "url": "packages/auth",         "options": { "symlink": true } },
+        { "type": "path", "url": "packages/i18n",         "options": { "symlink": true } },
+        { "type": "path", "url": "packages/validation",   "options": { "symlink": true } },
+        { "type": "path", "url": "packages/storage",      "options": { "symlink": true } },
+        { "type": "path", "url": "packages/log",          "options": { "symlink": true } },
+        { "type": "path", "url": "packages/active-record","options": { "symlink": true } },
+        { "type": "path", "url": "packages/facades",      "options": { "symlink": true } },
+        { "type": "path", "url": "packages/laravel-flavor","options": { "symlink": true } },
+        { "type": "path", "url": "packages/testing",      "options": { "symlink": true } },
+        { "type": "path", "url": "packages/phpstan-rules","options": { "symlink": true } },
+        { "type": "path", "url": "packages/framework",    "options": { "symlink": true } }
+    ],
+    "scripts": {
+        "test":     "php tests/run-all.php",
+        "optimize": "php bin/lombokclarion optimize",
+        "migrate":  "php bin/lombokclarion migrate",
+        "audit":    ["php bin/lombokclarion audit:sql", "php bin/lombokclarion audit:security"],
+        "check-domain": "php bin/check-domain-boundary.php"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "preferred-install": "dist"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "extra": {
+        "lombokclarion": {
+            "monorepo": true,
+            "packages-dir": "packages"
         }
     }
 }
