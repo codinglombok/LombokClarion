@@ -1,0 +1,372 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# LombokClarion — Publish to ALL 5 GitHub Packages Registries
+# Triggered on tag push (v*). Publishes:
+#   1. npm          → npm.pkg.github.com   (JS asset bundle)
+#   2. Container    → ghcr.io              (PHP-FPM image, existing Dockerfile)
+#   3. Maven        → maven.pkg.github.com (webjar — PHP+JS dist)
+#   4. NuGet        → nuget.pkg.github.com (content package)
+#   5. RubyGems     → rubygems.pkg.github.com (gem wrapper)
+#
+# Does NOT replace: npm-publish.yml (npmjs.org), split.yml (Packagist mirrors)
+# ──────────────────────────────────────────────────────────────────────────────
+name: Publish GitHub Packages (All Registries)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 0. Shared build artifact
+  # ═══════════════════════════════════════════════════════════════════════════
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      # PHP quality gate
+      - run: php tests/run-all.php
+
+      # Build vendored JS assets
+      - run: npm ci || npm install
+      - run: npm run assets:update || true
+
+      - id: ver
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: |
+            packages/
+            resources/
+            public/
+            bin/
+            bootstrap/
+            config/
+            src/
+            composer.json
+            package.json
+            README.md
+            LICENSE
+            Dockerfile
+            docker-compose.yml
+          retention-days: 1
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 1. npm → GitHub Packages (JS asset bundle)
+  # ═══════════════════════════════════════════════════════════════════════════
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@codinglombok'
+
+      - name: Scope package for GPR
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json','utf8'));
+            pkg.name = '@codinglombok/lombokclarion';
+            pkg.version = '${{ needs.build.outputs.version }}';
+            pkg.publishConfig = { registry: 'https://npm.pkg.github.com' };
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          "
+
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 2. Container → ghcr.io (multi-target PHP-FPM image)
+  # ═══════════════════════════════════════════════════════════════════════════
+  publish-container:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/lombokclarion
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Default target = base (php-fpm)
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ needs.build.outputs.version }}
+            ${{ env.IMAGE }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.description=LombokClarion PHP 8.3+ Full Stack framework
+            org.opencontainers.image.licenses=Apache-2.0
+
+      # CloudRun single-container target
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: cloudrun
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ needs.build.outputs.version }}-cloudrun
+            ${{ env.IMAGE }}:cloudrun
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 3. Maven → GitHub Packages (webjar)
+  # ═══════════════════════════════════════════════════════════════════════════
+  publish-maven:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist }
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Maven settings
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml << 'XML'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${env.GITHUB_ACTOR}</username>
+                <password>${env.GITHUB_TOKEN}</password>
+              </server>
+            </servers>
+          </settings>
+          XML
+
+      - name: Build webjar & deploy
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+          WJ="src/main/resources/META-INF/resources/webjars/lombokclarion/${VERSION}"
+
+          mkdir -p "${WJ}"
+          cp -r resources/* "${WJ}/" 2>/dev/null || true
+          cp README.md LICENSE "${WJ}/"
+
+          cat > pom.xml << POMEOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <project xmlns="http://maven.apache.org/POM/4.0.0"
+                   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                   http://maven.apache.org/xsd/maven-4.0.0.xsd"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>com.github.codinglombok</groupId>
+            <artifactId>lombokclarion</artifactId>
+            <version>${VERSION}</version>
+            <packaging>jar</packaging>
+            <name>LombokClarion</name>
+            <description>PHP 8.3+ Full Stack framework — webjar distribution</description>
+            <url>https://github.com/codinglombok/LombokClarion</url>
+            <licenses>
+              <license>
+                <name>Apache-2.0</name>
+                <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+              </license>
+            </licenses>
+            <scm>
+              <url>https://github.com/codinglombok/LombokClarion</url>
+            </scm>
+            <distributionManagement>
+              <repository>
+                <id>github</id>
+                <url>https://maven.pkg.github.com/codinglombok/LombokClarion</url>
+              </repository>
+            </distributionManagement>
+          </project>
+          POMEOF
+
+          mvn deploy -B -DskipTests
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 4. NuGet → GitHub Packages
+  # ═══════════════════════════════════════════════════════════════════════════
+  publish-nuget:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist }
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Pack & push
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+
+          mkdir -p nuget-pkg/content/resources
+          cp -r resources/* nuget-pkg/content/resources/ 2>/dev/null || true
+          cp README.md LICENSE nuget-pkg/
+
+          cat > nuget-pkg/LombokClarion.csproj << CSPROJ
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <TargetFramework>netstandard2.0</TargetFramework>
+              <PackageId>codinglombok.LombokClarion</PackageId>
+              <Version>${VERSION}</Version>
+              <Authors>codinglombok</Authors>
+              <Description>PHP 8.3+ Full Stack framework — asset distribution</Description>
+              <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+              <PackageProjectUrl>https://github.com/codinglombok/LombokClarion</PackageProjectUrl>
+              <RepositoryUrl>https://github.com/codinglombok/LombokClarion</RepositoryUrl>
+              <RepositoryType>git</RepositoryType>
+              <PackageTags>php framework fullstack lombokclarion</PackageTags>
+              <PackageReadmeFile>README.md</PackageReadmeFile>
+              <IncludeBuildOutput>false</IncludeBuildOutput>
+              <NoBuild>true</NoBuild>
+              <NoDefaultExcludes>true</NoDefaultExcludes>
+            </PropertyGroup>
+            <ItemGroup>
+              <Content Include="content/**/*" PackagePath="content/" />
+              <None Include="README.md" Pack="true" PackagePath="/" />
+              <None Include="LICENSE" Pack="true" PackagePath="/" />
+            </ItemGroup>
+          </Project>
+          CSPROJ
+
+          cd nuget-pkg
+          dotnet pack -o ../nupkg --no-build -p:NoBuild=true 2>/dev/null || \
+            dotnet pack -o ../nupkg 2>/dev/null || true
+          cd ..
+
+          # Fallback manual nupkg
+          if ! ls nupkg/*.nupkg 2>/dev/null; then
+            mkdir -p nupkg
+            cd nuget-pkg && zip -r ../nupkg/codinglombok.LombokClarion.${VERSION}.nupkg . -x '.*' && cd ..
+          fi
+
+          dotnet nuget add source \
+            --username codinglombok \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/codinglombok/index.json"
+
+          dotnet nuget push "nupkg/*.nupkg" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --source github --skip-duplicate
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 5. RubyGems → GitHub Packages
+  # ═══════════════════════════════════════════════════════════════════════════
+  publish-rubygems:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist }
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Build & push gem
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+
+          mkdir -p gem-pkg/lib/lombokclarion/resources
+          cp -r resources/* gem-pkg/lib/lombokclarion/resources/ 2>/dev/null || true
+          cp LICENSE README.md gem-pkg/
+
+          cat > gem-pkg/lib/lombokclarion/version.rb << RB
+          module LombokClarion
+            VERSION = "${VERSION}"
+          end
+          RB
+
+          cat > gem-pkg/lib/lombokclarion.rb << 'RB'
+          require_relative "lombokclarion/version"
+
+          module LombokClarion
+            def self.resources_path
+              File.join(File.dirname(__FILE__), "lombokclarion", "resources")
+            end
+          end
+          RB
+
+          cat > gem-pkg/lombokclarion.gemspec << GEMSPEC
+          require_relative "lib/lombokclarion/version"
+
+          Gem::Specification.new do |s|
+            s.name        = "lombokclarion"
+            s.version     = LombokClarion::VERSION
+            s.summary     = "PHP 8.3+ Full Stack framework — asset distribution"
+            s.description = "LombokClarion web framework vendored assets (LombokCSS, LombokCharts, LombokQRCode)"
+            s.authors     = ["codinglombok"]
+            s.homepage    = "https://github.com/codinglombok/LombokClarion"
+            s.license     = "Apache-2.0"
+            s.files       = Dir["lib/**/*", "LICENSE", "README.md"]
+            s.require_paths = ["lib"]
+            s.metadata    = {
+              "source_code_uri" => "https://github.com/codinglombok/LombokClarion",
+              "github_repo"     => "ssh://github.com/codinglombok/LombokClarion"
+            }
+            s.required_ruby_version = ">= 2.7.0"
+          end
+          GEMSPEC
+
+          cd gem-pkg
+          gem build lombokclarion.gemspec
+
+          mkdir -p ~/.gem
+          echo "---"                                > ~/.gem/credentials
+          echo ":github: Bearer ${GITHUB_TOKEN}"   >> ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+
+          gem push --key github \
+            --host https://rubygems.pkg.github.com/codinglombok \
+            "lombokclarion-${VERSION}.gem"

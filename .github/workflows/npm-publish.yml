@@ -1,4 +1,15 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# LombokClarion — Publish to npmjs.org (JS asset bundle)
+# Triggered on GitHub Release publish or manual dispatch.
+# Quality gate: PHP tests + domain boundary check, then npm publish.
+#
+# Does NOT replace: publish-packages.yml (GitHub Packages — all 5 registries),
+#                   split.yml (Packagist subtree mirrors)
+# ──────────────────────────────────────────────────────────────────────────────
 name: Publish to npm
+
+permissions:
+  contents: read
 on:
   release:
     types: [published]
@@ -9,17 +20,22 @@ jobs:
     permissions: { contents: read, id-token: write }  # id-token for npm provenance
     steps:
       - uses: actions/checkout@v7
+
       - uses: shivammathur/setup-php@v2
         with: { php-version: '8.3', extensions: pdo_sqlite }
-      - name: Quality gate before publish
+
+      - name: Quality gate (PHP)
         run: |
           php tests/run-all.php
           php bin/check-domain-boundary.php
+
       - uses: actions/setup-node@v7
-        with: { node-version: '20', registry-url: 'https://registry.npmjs.org' }
+        with: { node-version: '20', registry-url: 'https://registry.npmjs.org', cache: 'npm' }
+
       - name: Sync version from release tag (v1.2.3 -> 1.2.3)
         if: github.event_name == 'release'
         run: npm version ${GITHUB_REF_NAME#v} --no-git-tag-version
+
       - run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
