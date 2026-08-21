@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with: { php-version: '8.3', extensions: pdo_sqlite, openssl, mbstring, fileinfo }
       - name: Build artifacts (migrate + optimize — required before test suite)
