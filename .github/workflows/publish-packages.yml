@@ -121,7 +121,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # Default target = base (php-fpm)
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           push: true
@@ -134,7 +134,7 @@ jobs:
             org.opencontainers.image.licenses=Apache-2.0
 
       # CloudRun single-container target
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           target: cloudrun
