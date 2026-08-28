@@ -76,7 +76,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: dist }
 
       - uses: actions/setup-node@v4
@@ -153,7 +153,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: dist }
 
       - uses: actions/setup-java@v4
@@ -232,7 +232,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: dist }
 
       - uses: actions/setup-dotnet@v4
@@ -305,7 +305,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: dist }
 
       - uses: ruby/setup-ruby@v1
