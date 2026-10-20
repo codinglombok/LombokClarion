@@ -21,10 +21,13 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Jangan lint hasil build, snapshot, vendor, dan aset vendored/minified
-          FILTER_REGEX_EXCLUDE: (^|/)(dist|node_modules|site|docs|resources|storage|tests)/
+          # (public/assets berisi artefak minified hasil `optimize`)
+          FILTER_REGEX_EXCLUDE: (^|/)(dist|node_modules|site|docs|resources|storage|tests|public/assets)/
           # Menyalakan satu VALIDATE_* mematikan semua yang lain
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_CSS: true
           VALIDATE_JSON: true
           VALIDATE_YAML: true
           VALIDATE_MARKDOWN: true
+          # Rule kosmetik yamllint ber-level warning; jangan gagalkan build
+          YAML_ERROR_ON_WARNING: false
