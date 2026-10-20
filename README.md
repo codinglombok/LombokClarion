@@ -1,6 +1,6 @@
 # LombokClarion
 
-### GitHub
+## GitHub
 [![Stars](https://img.shields.io/github/stars/codinglombok/LombokClarion?style=flat-square&logo=github&labelColor=181717&color=gold)](https://github.com/codinglombok/LombokClarion/stargazers)
 [![Forks](https://img.shields.io/github/forks/codinglombok/LombokClarion?style=flat-square&logo=github&labelColor=181717&color=blue)](https://github.com/codinglombok/LombokClarion/network/members)
 [![Issues](https://img.shields.io/github/issues/codinglombok/LombokClarion?style=flat-square&logo=github&labelColor=181717&color=orange)](https://github.com/codinglombok/LombokClarion/issues)

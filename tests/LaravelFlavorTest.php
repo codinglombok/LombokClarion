@@ -41,6 +41,15 @@ final class Test_FlavorWidget extends Model
     protected static array $fillable = ['name'];
 }
 
+// Minimal PHP builds without libargon2 (PASSWORD_ARGON2ID undefined) skip this
+// suite instead of failing — mirrors tests/Framework/SecurityTest.php. CI
+// (shivammathur/setup-php) always ships argon2id, so this is a no-op there.
+if (!defined('PASSWORD_ARGON2ID')) {
+    test(basename(__FILE__) . ' requires libargon2 — skipped on this PHP build', fn () => markTestSkipped('libargon2 not compiled into this PHP build'));
+
+    return;
+}
+
 test('one enable() call switches on facades, AR connection, and returns the middleware list', function () {
     $container = test_flavorContainer();
 

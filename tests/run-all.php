@@ -16,15 +16,32 @@ declare(strict_types=1);
  * tests/Compat/TestCase.php is loaded, keeping the suite runnable in
  * sandboxes without network access. Exit code 0 = all green, 1 = failures.
  *
+ * Pest-style files (test('...', function () { ... })) are supported via
+ * tests/Compat/Pest.php: global `test()` registrations run right after
+ * their declaring file is loaded, and global assert* helpers delegate to
+ * the same TestCase API. This ALSO covers the flat harness-style suites
+ * (tests/*Test.php written against tests/harness.php) — they register
+ * through the same test() shim, so one runner executes every suite and
+ * a file that fails to load is reported as an error for that file while
+ * the remaining suites still run.
+ *
  * CI usage:  php tests/run-all.php
  * Filter:    php tests/run-all.php --filter=SchedulerTest
  */
+
+// The suite IS a local environment and says so explicitly. The APP_KEY
+// production guard treats an UNSET APP_ENV as production — fail safe,
+// not open — so the harness must declare itself rather than rely on the
+// default that guard exists to distrust. (Same contract as tests/harness.php.)
+putenv('APP_ENV=testing');
 
 require __DIR__ . '/../autoload.php';
 
 if (!class_exists('PHPUnit\\Framework\\TestCase')) {
     require __DIR__ . '/Compat/TestCase.php';
 }
+
+require_once __DIR__ . '/Compat/Pest.php';
 
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\SkippedTestError;
@@ -83,11 +100,22 @@ $assertions = 0;
 $startedAt = microtime(true);
 
 foreach ($testFiles as $file) {
+    $relative = str_replace($root . DIRECTORY_SEPARATOR, '', $file);
     $before = [
         'classes' => get_declared_classes(),
     ];
 
-    require_once $file;
+    // A file that fatals at load time (undefined helper, syntax error,
+    // missing symbol) is reported as an error for that file — the rest
+    // of the suite still runs, so CI output stays actionable.
+    try {
+        require_once $file;
+    } catch (Throwable $e) {
+        $assertions += \PHPUnit\Framework\TestCase::takeAssertionCount();
+        $errors[] = [$relative, $e];
+        echo 'E';
+        continue;
+    }
 
     $newClasses = array_diff(get_declared_classes(), $before['classes']);
 
@@ -144,6 +172,41 @@ foreach ($testFiles as $file) {
                 $errors[] = [$testId, $e];
                 echo 'E';
             }
+        }
+    }
+
+    // ── Pest-style tests registered by this file --------------------------
+
+    $pestTests = $GLOBALS['__CLARION_PEST_TESTS'] ?? [];
+    $GLOBALS['__CLARION_PEST_TESTS'] = [];
+
+    foreach ($pestTests as [$description, $closure]) {
+        $pestId = $relative . ' :: ' . $description;
+
+        if ($filter !== null && !str_contains($pestId, $filter)) {
+            continue;
+        }
+
+        $case = new __ClarionPestCase();
+        $bound = Closure::bind($closure, $case, $case::class) ?? $closure;
+
+        try {
+            $case->runBare($bound);
+            $passes++;
+            $assertions += \PHPUnit\Framework\TestCase::takeAssertionCount();
+            echo '.';
+        } catch (SkippedTestError) {
+            $skipped++;
+            \PHPUnit\Framework\TestCase::takeAssertionCount();
+            echo 'S';
+        } catch (AssertionFailedError $e) {
+            $assertions += \PHPUnit\Framework\TestCase::takeAssertionCount();
+            $failures[] = [$pestId, $e];
+            echo 'F';
+        } catch (Throwable $e) {
+            $assertions += \PHPUnit\Framework\TestCase::takeAssertionCount();
+            $errors[] = [$pestId, $e];
+            echo 'E';
         }
     }
 }

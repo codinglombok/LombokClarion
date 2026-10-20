@@ -17,6 +17,15 @@ use LombokClarion\Security\SecurityConfig;
 use LombokClarion\Security\SecurityHeaders;
 use LombokClarion\Security\ValidateCsrf;
 
+// Minimal PHP builds without libargon2 (PASSWORD_ARGON2ID undefined) skip this
+// suite instead of failing — mirrors tests/Framework/SecurityTest.php. CI
+// (shivammathur/setup-php) always ships argon2id, so this is a no-op there.
+if (!defined('PASSWORD_ARGON2ID')) {
+    test(basename(__FILE__) . ' requires libargon2 — skipped on this PHP build', fn () => markTestSkipped('libargon2 not compiled into this PHP build'));
+
+    return;
+}
+
 test('argon2id hasher hashes and verifies correctly', function () {
     $hasher = new Argon2idPasswordHasher(new SecurityConfig());
     $hash = $hasher->hash('correct horse battery staple');

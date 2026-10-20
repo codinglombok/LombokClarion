@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LombokClarion\Security;
 
+use LombokClarion\Security\Exceptions\SecurityException;
+
 /**
  * No app code ever calls password_hash()/password_verify() directly —
  * this is the single, injected implementation, so cost params live in one

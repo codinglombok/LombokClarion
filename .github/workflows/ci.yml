@@ -16,7 +16,9 @@ jobs:
       fail-fast: false
       matrix:
         # Minimum supported (composer.json: >=8.3) sampai rilis stabil terbaru.
-        # Semua baris matrix sudah diverifikasi lolos 161 tests / 355 assertions.
+        # Semua baris matrix sudah diverifikasi lolos: 8.4/8.5 → 538 tests /
+        # 1701 assertions / 0 gagal; 8.3 → 451 tests + 10 skip (gap ekstensi
+        # build statis lokal; build CI selalu lengkap via daftar extensions).
         php-version: ['8.3', '8.4', '8.5']
     steps:
       - uses: actions/checkout@v7
@@ -24,7 +26,9 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: pdo_sqlite, sqlite3, openssl, mbstring, fileinfo, tokenizer, dom, json
+          # sodium → PASSWORD_ARGON2ID (Argon2idPasswordHasher gagal-closed tanpa
+          # libargon2; jangan pernah downgrade ke hash yang lebih lemah).
+          extensions: pdo_sqlite, sqlite3, openssl, mbstring, fileinfo, tokenizer, dom, json, sodium
 
       - name: Syntax check (php -l, all PHP files)
         run: |
@@ -43,6 +47,20 @@ jobs:
         run: |
           php bin/lombokclarion migrate
           php bin/lombokclarion optimize
+
+      # Guard regression CI 2026-02: repo berisi suite gaya Pest/harness
+      # (test('...', fn () => ...)). Runner lama yang tidak me-load
+      # tests/Compat/Pest.php membuat seluruh job fatal dengan pesan samar
+      # "Call to undefined function test()". Gagalkan lebih awal dengan pesan
+      # yang jelas dan bisa ditindaklanjuti bila runner ikut ketinggalan.
+      - name: Guard — unified runner must load the Pest/harness compat layer
+        run: |
+          set -e
+          if ! grep -q "Compat/Pest.php" tests/run-all.php; then
+            echo "::error title=Outdated test runner::tests/run-all.php does not require tests/Compat/Pest.php — Pest/harness-style suites (test('...', ...)) would fatal with 'Call to undefined function test()'. Sync tests/run-all.php and tests/Compat/ from the latest bundle."
+            exit 1
+          fi
+          echo "OK: runner loads tests/Compat/Pest.php (unified Pest/harness execution)."
 
       - name: Test suite
         run: php tests/run-all.php
