@@ -265,7 +265,11 @@ final class TokenScanner
 
     /**
      * Scans a right-hand side up to its terminating `;` for the same unsafe
-     * shapes patterns 1-3 look for.
+     * shapes patterns 1-3 look for. Variables recorded in the sanitized map
+     * (assigned straight from Identifier::validate()/quote() or
+     * TrustedDdl::mark()) are exempt here too, so the dataflow pass and the
+     * call-site pass agree on the same escape hatches — a variable the
+     * call-site pass accepts must not taint an assignment either.
      */
     private function rangeIsTainted(array $tokens, int $from): bool
     {
@@ -292,7 +296,9 @@ final class TokenScanner
                 if ($tok[0] === T_VARIABLE) {
                     $prev = $this->prevMeaningful($tokens, $i);
                     if ($prev !== null && is_array($tokens[$prev]) && $tokens[$prev][0] === T_ENCAPSED_AND_WHITESPACE) {
-                        return true;
+                        if (!isset($this->sanitized[ltrim($tok[1], '$')])) {
+                            return true;
+                        }
                     }
                 }
 
@@ -301,15 +307,20 @@ final class TokenScanner
                 }
             }
 
-            // Concatenation where either side is a variable.
+            // Concatenation where either side is a variable that did not come
+            // from a sanctioned sanitizer.
             if ($tok === '.') {
                 $next = $this->nextMeaningful($tokens, $i);
                 $prev = $this->prevMeaningful($tokens, $i);
                 if ($next !== null && is_array($tokens[$next]) && $tokens[$next][0] === T_VARIABLE) {
-                    return true;
+                    if (!isset($this->sanitized[ltrim($tokens[$next][1], '$')])) {
+                        return true;
+                    }
                 }
                 if ($prev !== null && is_array($tokens[$prev]) && $tokens[$prev][0] === T_VARIABLE) {
-                    return true;
+                    if (!isset($this->sanitized[ltrim($tokens[$prev][1], '$')])) {
+                        return true;
+                    }
                 }
             }
         }

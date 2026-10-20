@@ -11,6 +11,7 @@
     "esbuild": "^0.28.2",
     "lombok-charts": "^0.1.0",
     "lombokqrcode": "^0.2.0",
+    "prettier": "^3.3.3",
     "typescript": "^7.0.2"
   },
   "scripts": {
@@ -18,6 +19,8 @@
     "assets:update:css": "curl -sL https://raw.githubusercontent.com/codinglombok/LombokCSS/main/dist/lombok.min.css -o resources/lombokcss/lombok.min.css",
     "assets:update": "npm run assets:update:charts && npm run assets:update:css && npm run assets:update:qrcode",
     "test": "php tests/run-all.php",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
     "assets:update:qrcode": "esbuild node_modules/lombokqrcode/dist/index.mjs --bundle --format=iife --global-name=LombokQRCode --minify --outfile=resources/lombokqrcode/lombokqrcode.umd.min.js"
   },
   "files": [

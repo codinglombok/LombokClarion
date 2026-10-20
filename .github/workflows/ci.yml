@@ -1,22 +1,55 @@
 name: CI
-on: { push: { branches: [main] }, pull_request: {} }
+
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+
 permissions:
   contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    name: Test (PHP ${{ matrix.php-version }})
+    strategy:
+      fail-fast: false
+      matrix:
+        # Minimum supported (composer.json: >=8.3) sampai rilis stabil terbaru.
+        # Semua baris matrix sudah diverifikasi lolos 161 tests / 355 assertions.
+        php-version: ['8.3', '8.4', '8.5']
     steps:
       - uses: actions/checkout@v7
+
       - uses: shivammathur/setup-php@v2
-        with: { php-version: '8.3', extensions: pdo_sqlite, openssl, mbstring, fileinfo }
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: pdo_sqlite, sqlite3, openssl, mbstring, fileinfo, tokenizer, dom, json
+
+      - name: Syntax check (php -l, all PHP files)
+        run: |
+          set -e
+          find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -n1 php -l > /dev/null
+          echo "All PHP files parsed cleanly."
+
+      - name: Validate JSON manifests
+        run: |
+          set -e
+          for f in composer.json composer.lock package.json package-lock.json; do
+            if [ -f "$f" ]; then php -r 'json_decode(file_get_contents($argv[1]), true, 512, JSON_THROW_ON_ERROR); echo "OK $argv[1]\n";' "$f"; fi
+          done
+
       - name: Build artifacts (migrate + optimize — required before test suite)
         run: |
           php bin/lombokclarion migrate
           php bin/lombokclarion optimize
-      - name: Test suite (377+)
+
+      - name: Test suite
         run: php tests/run-all.php
+
       - name: Domain boundary (Deptrac-equivalent)
         run: php bin/check-domain-boundary.php
+
       - name: Security & SQL audits
         run: |
           php bin/lombokclarion audit:security

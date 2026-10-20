@@ -12,5 +12,5 @@ jobs:
     - uses: actions/first-interaction@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: "Message that will be displayed on users' first issue"
-        pr-message: "Message that will be displayed on users' first pull request"
+        issue-message: "Welcome to LombokClarion! Thank you for opening your first issue. Please fill in the bug/feature template so we can help faster."
+        pr-message: "Thank you for your first pull request! A maintainer will review it shortly. Please make sure CI is green."

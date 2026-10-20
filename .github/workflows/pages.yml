@@ -1,6 +1,8 @@
 name: Deploy docs to GitHub Pages
 on:
-  push: { branches: [main], paths: ['docs/**', 'README.md', '.github/workflows/pages.yml'] }
+  push:
+    branches: [main]
+    paths: ['docs/**', 'README.md', '.github/workflows/pages.yml']
   workflow_dispatch: {}
 permissions: { contents: read, pages: write, id-token: write }
 concurrency: { group: pages, cancel-in-progress: true }
@@ -24,8 +26,9 @@ jobs:
                 '<body><nav><a href="index.html">Home</a><a href="DEPLOYMENT.html">Deploy</a>' \
                 '<a href="AUDIT-TRAIL.html">Audit Trail</a><a href="PROJECT-SUMMARY.html">Summary</a></nav>{b}</body></html>'
           pages = {'index': 'README.md'}
-          for f in pathlib.Path('docs').glob('*.md'):
-              pages[f.stem] = str(f)
+          if pathlib.Path('docs').is_dir():
+              for f in pathlib.Path('docs').glob('*.md'):
+                  pages[f.stem] = str(f)
           for name, src in pages.items():
               body = markdown.markdown(open(src, encoding='utf-8').read(),
                                        extensions=['tables', 'fenced_code'])

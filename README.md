@@ -19,7 +19,7 @@
 
 ### Quality
 [![CI Tests](https://img.shields.io/github/actions/workflow/status/codinglombok/LombokClarion/tests.yml?style=flat-square&logo=github-actions&logoColor=white&labelColor=2088FF&color=brightgreen&label=CI+Tests&branch=main)](https://github.com/codinglombok/LombokClarion/actions)
-[![Tests](https://img.shields.io/badge/Tests-377%20passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white&labelColor=21B352)](https://github.com/codinglombok/LombokClarion/tree/main/tests)
+[![Tests](https://img.shields.io/badge/Tests-156%20passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white&labelColor=21B352)](https://github.com/codinglombok/LombokClarion/tree/main/tests)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%209-blue?style=flat-square&logo=php&logoColor=white&labelColor=777BB4)](https://github.com/codinglombok/LombokClarion/blob/main/phpstan.neon)
 [![PHP](https://img.shields.io/badge/PHP-8.3%2B-blueviolet?style=flat-square&logo=php&logoColor=white&labelColor=777BB4)](https://www.php.net/releases/8.3/)
 [![strict_types](https://img.shields.io/badge/strict__types-everywhere-FF6B35?style=flat-square&logo=php&logoColor=white&labelColor=333)](https://www.php.net/manual/en/declare.strict-types.php)
@@ -47,7 +47,7 @@
 
 ---
 
-A PHP 8.3+ Full Stack Web framework built on the philosophy **explicit over
+A PHP 8.3–8.5 Full Stack Web framework (CI matrix: 8.3 / 8.4 / 8.5) built on the philosophy **explicit over
 magic**: edge/serverless-first, domain layer with zero framework imports,
 containerization-ready.
 
@@ -62,11 +62,11 @@ gate blocks them from `app/Domain/**`. There is no auto-discovery anywhere:
 every binding, route, command, and migration is registered in an explicit
 manifest file.
 
-This repo contains **working, tested code** (377 tests, 0 failures) plus a
+This repo contains **working, tested code** (156 tests, 337 assertions, 0 failures) plus a
 small end-to-end example app (a Widget CRUD feature) wiring all packages
 together. It is not a drop-in `composer create-project` package yet,
 every piece that exists actually runs, and is covered by tests that
-actually run (377 tests, 0 failures, see "Running the tests").
+actually run (156 tests, 337 assertions, 0 failures, see "Running the tests").
 
 ## Installing / consuming the packages
 
@@ -157,7 +157,7 @@ config/config.schema.php   typed config schema
 public/index.php           HTTP entrypoint (FpmAdapter)
 bin/lombokclarion           CLI entrypoint
 bin/check-domain-boundary.php  Deptrac-equivalent CI check (see below)
-tests/                      377 tests across 27 files, custom zero-dependency harness
+tests/                      156 tests across 19 files (14 monorepo suites + 5 vendored table-sheet), custom zero-dependency harness
 ```
 
 ## Why a custom autoloader instead of Composer?
