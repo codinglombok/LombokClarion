@@ -10,6 +10,9 @@ on:
       - '.github/workflows/generate-wiki.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   generate-wiki:
     permissions:
@@ -23,7 +26,7 @@ jobs:
       - name: Checkout wiki repository
         uses: actions/checkout@v7
         with:
-          repository: codinglombok/LombokCharts.wiki
+          repository: codinglombok/LombokClarion.wiki
           path: wiki
           token: ${{ secrets.GITHUB_TOKEN }}
 

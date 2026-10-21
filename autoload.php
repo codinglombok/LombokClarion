@@ -30,6 +30,17 @@ spl_autoload_register(function (string $class): void {
         'LombokClarion\\Validation\\' => __DIR__ . '/packages/validation/src/',
         'LombokClarion\\Storage\\'   => __DIR__ . '/packages/storage/src/',
         'LombokClarion\\Log\\'       => __DIR__ . '/packages/log/src/',
+        'LombokClarion\\Cache\\'     => __DIR__ . '/packages/cache/src/',
+        'LombokClarion\\Session\\'   => __DIR__ . '/packages/session/src/',
+        'LombokClarion\\Scheduler\\' => __DIR__ . '/packages/scheduler/src/',
+        'LombokClarion\\Broadcasting\\' => __DIR__ . '/packages/broadcasting/src/',
+        'LombokClarion\\Notification\\' => __DIR__ . '/packages/notification/src/',
+        'LombokClarion\\WebSocket\\' => __DIR__ . '/packages/websocket/src/',
+        'LombokClarion\\Mail\\'      => __DIR__ . '/packages/mail/src/',
+        'LombokClarion\\CloudStorage\\' => __DIR__ . '/packages/cloud-storage/src/',
+        'LombokClarion\\Inertia\\'   => __DIR__ . '/packages/inertia/src/',
+        'LombokClarion\\Vite\\'      => __DIR__ . '/packages/vite/src/',
+        'LombokClarion\\PHPStanRules\\' => __DIR__ . '/packages/phpstan-rules/src/',
         'App\\'                      => __DIR__ . '/app/',
     ];
 
@@ -42,5 +53,37 @@ spl_autoload_register(function (string $class): void {
             }
             return;
         }
+    }
+
+    // lombokclarion/table-sheet ships multiple classes per file (classmap
+    // layout in its own composer.json), so mirror that here: index every
+    // class the src tree declares and require its file on demand.
+    static $tableSheetClassMap = null;
+    if ($tableSheetClassMap === null) {
+        $tableSheetClassMap = [];
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(__DIR__ . '/packages/table-sheet/src', RecursiveDirectoryIterator::SKIP_DOTS)
+        );
+        $before = get_declared_classes();
+        $beforeInterfaces = get_declared_interfaces();
+        foreach ($iterator as $file) {
+            if (!$file instanceof SplFileInfo || $file->getExtension() !== 'php') {
+                continue;
+            }
+            $path = $file->getPathname();
+            require_once $path;
+            foreach (array_diff(get_declared_classes(), $before) as $c) {
+                $tableSheetClassMap[$c] = $path;
+                $before[] = $c;
+            }
+            foreach (array_diff(get_declared_interfaces(), $beforeInterfaces) as $c) {
+                $tableSheetClassMap[$c] = $path;
+                $beforeInterfaces[] = $c;
+            }
+        }
+    }
+
+    if (isset($tableSheetClassMap[$class])) {
+        require_once $tableSheetClassMap[$class];
     }
 });

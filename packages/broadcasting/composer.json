@@ -7,8 +7,9 @@
     "homepage": "https://github.com/codinglombok/LombokClarion",
     "require": {
         "php": ">=8.3",
+        "lombokclarion/auth": "*",
         "lombokclarion/bus": "*",
-        "lombokclarion/auth": "*"
+        "lombokclarion/persistence": "*"
     },
     "autoload": {
         "psr-4": {

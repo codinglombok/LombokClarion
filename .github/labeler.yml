@@ -1,0 +1,92 @@
+# Configuration for actions/labeler@v7 — used by .github/workflows/label.yml
+# Labels are applied based on the paths/files changed in a pull request.
+
+framework-core:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/container/**
+          - packages/http/**
+          - packages/routing/**
+          - packages/bus/**
+
+persistence:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/persistence/**
+          - packages/active-record/**
+
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/security/**
+          - packages/auth/**
+
+console:
+  - changed-files:
+      - any-glob-to-any-file: packages/console/**
+
+view:
+  - changed-files:
+      - any-glob-to-any-file: packages/view/**
+
+i18n:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/i18n/**
+          - packages/validation/**
+          - resources/lang/**
+
+packages:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/cache/**
+          - packages/session/**
+          - packages/log/**
+          - packages/storage/**
+          - packages/config/**
+          - packages/mail/**
+          - packages/notification/**
+          - packages/broadcasting/**
+          - packages/websocket/**
+          - packages/scheduler/**
+          - packages/inertia/**
+          - packages/vite/**
+          - packages/cloud-storage/**
+          - packages/table-sheet/**
+
+example-app:
+  - changed-files:
+      - any-glob-to-any-file:
+          - app/**
+          - bootstrap/**
+          - public/**
+          - resources/views/**
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: .github/**
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/**
+          - README.md
+          - CHANGELOG.md
+          - CONTRIBUTING.md
+          - SECURITY.md
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - composer.json
+          - composer.lock
+          - package.json
+          - package-lock.json
+
+docker:
+  - changed-files:
+      - any-glob-to-any-file:
+          - Dockerfile
+          - docker-compose.yml
+          - .dockerignore
+          - deploy/**
