@@ -134,6 +134,15 @@ function auth_run(object $middleware, Request $request): Response
 
 // --- attempt ---------------------------------------------------------------
 
+// Minimal PHP builds without libargon2 (PASSWORD_ARGON2ID undefined) skip this
+// suite instead of failing — mirrors tests/Framework/SecurityTest.php. CI
+// (shivammathur/setup-php) always ships argon2id, so this is a no-op there.
+if (!defined('PASSWORD_ARGON2ID')) {
+    test(basename(__FILE__) . ' requires libargon2 — skipped on this PHP build', fn () => markTestSkipped('libargon2 not compiled into this PHP build'));
+
+    return;
+}
+
 test('attempt succeeds with correct credentials', function () {
     [$auth] = auth_make();
     $user = $auth->attempt('ada@example.test', 'correct-horse');
