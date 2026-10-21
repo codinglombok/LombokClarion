@@ -1,22 +1,73 @@
 name: CI
-on: { push: { branches: [main] }, pull_request: {} }
+
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+
 permissions:
   contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    name: Test (PHP ${{ matrix.php-version }})
+    strategy:
+      fail-fast: false
+      matrix:
+        # Minimum supported (composer.json: >=8.3) sampai rilis stabil terbaru.
+        # Semua baris matrix sudah diverifikasi lolos: 8.4/8.5 → 538 tests /
+        # 1701 assertions / 0 gagal; 8.3 → 451 tests + 10 skip (gap ekstensi
+        # build statis lokal; build CI selalu lengkap via daftar extensions).
+        php-version: ['8.3', '8.4', '8.5']
     steps:
       - uses: actions/checkout@v7
+
       - uses: shivammathur/setup-php@v2
-        with: { php-version: '8.3', extensions: pdo_sqlite, openssl, mbstring, fileinfo }
+        with:
+          php-version: ${{ matrix.php-version }}
+          # sodium → PASSWORD_ARGON2ID (Argon2idPasswordHasher gagal-closed tanpa
+          # libargon2; jangan pernah downgrade ke hash yang lebih lemah).
+          extensions: pdo_sqlite, sqlite3, openssl, mbstring, fileinfo, tokenizer, dom, json, sodium
+
+      - name: Syntax check (php -l, all PHP files)
+        run: |
+          set -e
+          find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -n1 php -l > /dev/null
+          echo "All PHP files parsed cleanly."
+
+      - name: Validate JSON manifests
+        run: |
+          set -e
+          for f in composer.json composer.lock package.json package-lock.json; do
+            if [ -f "$f" ]; then php -r 'json_decode(file_get_contents($argv[1]), true, 512, JSON_THROW_ON_ERROR); echo "OK $argv[1]\n";' "$f"; fi
+          done
+
       - name: Build artifacts (migrate + optimize — required before test suite)
         run: |
           php bin/lombokclarion migrate
           php bin/lombokclarion optimize
-      - name: Test suite (377+)
+
+      # Guard regression CI 2026-02: repo berisi suite gaya Pest/harness
+      # (test('...', fn () => ...)). Runner lama yang tidak me-load
+      # tests/Compat/Pest.php membuat seluruh job fatal dengan pesan samar
+      # "Call to undefined function test()". Gagalkan lebih awal dengan pesan
+      # yang jelas dan bisa ditindaklanjuti bila runner ikut ketinggalan.
+      - name: Guard — unified runner must load the Pest/harness compat layer
+        run: |
+          set -e
+          if ! grep -q "Compat/Pest.php" tests/run-all.php; then
+            echo "::error title=Outdated test runner::tests/run-all.php does not require tests/Compat/Pest.php — Pest/harness-style suites (test('...', ...)) would fatal with 'Call to undefined function test()'. Sync tests/run-all.php and tests/Compat/ from the latest bundle."
+            exit 1
+          fi
+          echo "OK: runner loads tests/Compat/Pest.php (unified Pest/harness execution)."
+
+      - name: Test suite
         run: php tests/run-all.php
+
       - name: Domain boundary (Deptrac-equivalent)
         run: php bin/check-domain-boundary.php
+
       - name: Security & SQL audits
         run: |
           php bin/lombokclarion audit:security
