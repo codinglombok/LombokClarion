@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace LombokClarion\Cache\Drivers;
 
 use LombokClarion\Cache\Cache;
+use LombokClarion\Persistence\Identifier;
+use LombokClarion\Persistence\TrustedDdl;
 use PDO;
 
 /**
@@ -24,14 +26,19 @@ final class DatabaseCacheDriver implements Cache
         private readonly PDO $pdo,
         private readonly string $table = 'lc_cache',
     ) {
+        // The table name can never be a bound parameter, so it is validated
+        // once here — every SQL build site below re-derives it through the
+        // same validator the QueryBuilder uses.
+        Identifier::validate($table);
     }
 
     public function get(string $key): mixed
     {
         $this->ensureTable();
+        $table = Identifier::validate($this->table);
 
         $stmt = $this->pdo->prepare(
-            "SELECT value, expiry FROM {$this->table} WHERE key = ?"
+            'SELECT value, expiry FROM ' . $table . ' WHERE key = ?'
         );
         $stmt->execute([$key]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -57,12 +64,13 @@ final class DatabaseCacheDriver implements Cache
 
         // UPSERT: SQLite uses INSERT OR REPLACE, MySQL uses ON DUPLICATE KEY
         $driver = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $table = Identifier::validate($this->table);
 
         if ($driver === 'sqlite') {
-            $sql = "INSERT OR REPLACE INTO {$this->table} (key, value, expiry) VALUES (?, ?, ?)";
+            $sql = 'INSERT OR REPLACE INTO ' . $table . ' (key, value, expiry) VALUES (?, ?, ?)';
         } else {
-            $sql = "INSERT INTO {$this->table} (key, value, expiry) VALUES (?, ?, ?) "
-                 . "ON DUPLICATE KEY UPDATE value = VALUES(value), expiry = VALUES(expiry)";
+            $sql = 'INSERT INTO ' . $table . ' (key, value, expiry) VALUES (?, ?, ?) '
+                 . 'ON DUPLICATE KEY UPDATE value = VALUES(value), expiry = VALUES(expiry)';
         }
 
         $stmt = $this->pdo->prepare($sql);
@@ -77,15 +85,17 @@ final class DatabaseCacheDriver implements Cache
     public function forget(string $key): void
     {
         $this->ensureTable();
+        $table = Identifier::validate($this->table);
 
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE key = ?");
+        $stmt = $this->pdo->prepare('DELETE FROM ' . $table . ' WHERE key = ?');
         $stmt->execute([$key]);
     }
 
     public function flush(): void
     {
         $this->ensureTable();
-        $this->pdo->exec("DELETE FROM {$this->table}");
+        $table = Identifier::validate($this->table);
+        $this->pdo->exec('DELETE FROM ' . $table);
     }
 
     public function remember(string $key, int $ttl, callable $factory): mixed
@@ -122,9 +132,14 @@ final class DatabaseCacheDriver implements Cache
     public function gc(): int
     {
         $this->ensureTable();
+        $table = Identifier::validate($this->table);
 
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE expiry < ?");
-        $stmt->execute([time()]);
+        $stmt = $this->pdo->prepare('DELETE FROM ' . $table . ' WHERE expiry < ?');
+        // PARAM_INT — SQLite orders any INTEGER below any TEXT, so a
+        // string-bound time would invert this comparison and DELETE EVERY
+        // row (live cache included). Numeric column, numeric parameter.
+        $stmt->bindValue(1, time(), PDO::PARAM_INT);
+        $stmt->execute();
 
         return $stmt->rowCount();
     }
@@ -135,13 +150,15 @@ final class DatabaseCacheDriver implements Cache
             return;
         }
 
-        $this->pdo->exec(
-            "CREATE TABLE IF NOT EXISTS {$this->table} ("
+        $table = Identifier::validate($this->table);
+
+        $this->pdo->exec(TrustedDdl::mark(
+            'CREATE TABLE IF NOT EXISTS ' . $table . ' ('
             . 'key VARCHAR(255) NOT NULL PRIMARY KEY, '
             . 'value TEXT NOT NULL, '
             . 'expiry INTEGER NOT NULL'
             . ')'
-        );
+        ));
 
         $this->tableCreated = true;
     }

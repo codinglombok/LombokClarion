@@ -72,8 +72,8 @@ final class Scheduler
                 if ($task->isCommand() && $task->commandName() !== null) {
                     $args = array_merge([$task->commandName()], $task->commandArgs());
                     $this->console->handle($args);
-                } elseif ($task->callback() !== null) {
-                    ($task->callback())();
+                } elseif ($task->callbackClosure() !== null) {
+                    ($task->callbackClosure())();
                 }
 
                 $duration = microtime(true) - $start;
