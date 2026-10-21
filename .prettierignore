@@ -25,3 +25,8 @@ jsconfig.json
 # playwright artifacts (baselines under tests/**-snapshots ARE committed)
 test-results/
 playwright-report/
+# vendored third-party / minified assets — never reformat
+resources/
+storage/
+# prose documents (badges, changelogs, licenses) — keep authored layout
+*.md

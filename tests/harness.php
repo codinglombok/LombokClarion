@@ -78,3 +78,15 @@ function runTests(string $file): void
         exit(1);
     }
 }
+
+// ── CLI entry ---------------------------------------------------------------
+// php tests/harness.php tests/SomeTest.php   (single-suite standalone run)
+//
+// NOTE: CI always runs the unified runner (php tests/run-all.php), which
+// loads the function_exists-guarded equivalents from tests/Compat/Pest.php
+// and executes every *Test.php — including the suites registered through
+// this harness. This entry point only exists for isolated debugging.
+if (PHP_SAPI === 'cli' && isset($argv[1])) {
+    runTests($argv[1]);
+}
+

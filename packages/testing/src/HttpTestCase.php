@@ -41,23 +41,23 @@ final class HttpTestCase
         $this->container->instance($id, $fake);
     }
 
-    public function get(string $path, array $query = []): Response
+    public function get(string $path, array $query = [], array $headers = [], array $cookies = []): Response
     {
-        return $this->kernel->handle(new Request('GET', $path, query: $query));
+        return $this->kernel->handle(new Request('GET', $path, query: $query, headers: $headers, cookies: $cookies));
     }
 
-    public function post(string $path, array $body = []): Response
+    public function post(string $path, array $body = [], array $headers = [], array $cookies = []): Response
     {
-        return $this->kernel->handle(new Request('POST', $path, body: $body));
+        return $this->kernel->handle(new Request('POST', $path, body: $body, headers: $headers, cookies: $cookies));
     }
 
-    public function put(string $path, array $body = []): Response
+    public function put(string $path, array $body = [], array $headers = [], array $cookies = []): Response
     {
-        return $this->kernel->handle(new Request('PUT', $path, body: $body));
+        return $this->kernel->handle(new Request('PUT', $path, body: $body, headers: $headers, cookies: $cookies));
     }
 
-    public function delete(string $path): Response
+    public function delete(string $path, array $headers = [], array $cookies = []): Response
     {
-        return $this->kernel->handle(new Request('DELETE', $path));
+        return $this->kernel->handle(new Request('DELETE', $path, headers: $headers, cookies: $cookies));
     }
 }

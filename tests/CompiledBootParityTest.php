@@ -50,6 +50,15 @@ function test_compiledArtifactsPresent(): bool
         && is_file($root . '/storage/routes.compiled.php');
 }
 
+// Minimal PHP builds without libargon2 (PASSWORD_ARGON2ID undefined) skip this
+// suite instead of failing — mirrors tests/Framework/SecurityTest.php. CI
+// (shivammathur/setup-php) always ships argon2id, so this is a no-op there.
+if (!defined('PASSWORD_ARGON2ID')) {
+    test(basename(__FILE__) . ' requires libargon2 — skipped on this PHP build', fn () => markTestSkipped('libargon2 not compiled into this PHP build'));
+
+    return;
+}
+
 test('#43: a hand-built Request normalizes header casing — Authorization is not silently lost', function () {
     $request = new Request('GET', '/x', headers: [
         'Authorization' => 'Bearer abc',

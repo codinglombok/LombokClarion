@@ -8,7 +8,7 @@ namespace LombokClarion\Scheduler;
  * Parses and matches standard five-field cron expressions:
  *   minute hour day-of-month month day-of-week
  *
- * Supports: *, ranges (1-5), lists (1,3,5), steps (*/5, 1-10/2).
+ * Supports: `*`, ranges (1-5), lists (1,3,5), steps (every-Nth, e.g. slash-step syntax).
  * No named days/months — use numbers.
  */
 final class CronExpression
