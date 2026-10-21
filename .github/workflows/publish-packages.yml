@@ -16,12 +16,17 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: read
+
 jobs:
   # ═══════════════════════════════════════════════════════════════════════════
   # 0. Shared build artifact
   # ═══════════════════════════════════════════════════════════════════════════
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       version: ${{ steps.ver.outputs.version }}
     steps:

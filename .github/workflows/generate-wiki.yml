@@ -10,6 +10,9 @@ on:
       - '.github/workflows/generate-wiki.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   generate-wiki:
     permissions:

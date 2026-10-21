@@ -4,6 +4,9 @@ on:
   push:
     branches-ignore: [ main ] # Best to avoid direct auto-commits to main
 
+permissions:
+  contents: read
+
 jobs:
   format:
     runs-on: ubuntu-latest
