@@ -1,0 +1,28 @@
+---
+# yamllint configuration for LombokClarion (consumed by super-linter).
+#
+# Keeps the meaningful checks — syntax, duplicate keys, truthy values —
+# while disabling purely cosmetic style rules. The `truthy.check-keys:
+# false` override is essential: every GitHub Actions workflow uses the
+# `on:` trigger key, which the default truthy rule would flag as an error.
+extends: default
+
+rules:
+  truthy:
+    check-keys: false
+  braces: disable
+  brackets: disable
+  colons: disable
+  commas: disable
+  comments: disable
+  comments-indentation: disable
+  document-end: disable
+  document-start: disable
+  empty-lines: disable
+  hyphens: disable
+  indentation: disable
+  key-duplicates: enable
+  line-length: disable
+  new-line-at-end-of-file: disable
+  new-lines: disable
+  trailing-spaces: disable

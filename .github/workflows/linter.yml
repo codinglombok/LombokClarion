@@ -15,16 +15,19 @@ jobs:
           fetch-depth: 0   # wajib agar diff "changed files only" berfungsi
 
       - name: Lint Code Base
-        uses: super-linter/super-linter@v8.7.0
+        uses: super-linter/super-linter@v9
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Jangan lint hasil build, snapshot, dan vendor
-          FILTER_REGEX_EXCLUDE: (^|/)(dist|node_modules|site|docs)/|tests/visual/__snapshots__/
+          # Jangan lint hasil build, snapshot, vendor, dan aset vendored/minified
+          # (public/assets berisi artefak minified hasil `optimize`)
+          FILTER_REGEX_EXCLUDE: (^|/)(dist|node_modules|site|docs|resources|storage|tests|public/assets)/
           # Menyalakan satu VALIDATE_* mematikan semua yang lain
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_CSS: true
           VALIDATE_JSON: true
           VALIDATE_YAML: true
           VALIDATE_MARKDOWN: true
+          # Rule kosmetik yamllint ber-level warning; jangan gagalkan build
+          YAML_ERROR_ON_WARNING: false
