@@ -161,7 +161,7 @@ final class ScheduledTask
         return $this->commandArgs;
     }
 
-    public function callback(): ?\Closure
+    public function callbackClosure(): ?\Closure
     {
         return $this->callback;
     }

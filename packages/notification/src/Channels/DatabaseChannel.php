@@ -7,6 +7,8 @@ namespace LombokClarion\Notification\Channels;
 use LombokClarion\Notification\Notifiable;
 use LombokClarion\Notification\Notification;
 use LombokClarion\Notification\NotificationChannel;
+use LombokClarion\Persistence\Identifier;
+use LombokClarion\Persistence\TrustedDdl;
 use PDO;
 
 /**
@@ -21,6 +23,10 @@ final class DatabaseChannel implements NotificationChannel
         private readonly PDO $pdo,
         private readonly string $table = 'lc_notifications',
     ) {
+        // The table name can never be a bound parameter, so it is validated
+        // once here — every SQL build site below re-derives it through the
+        // same validator the QueryBuilder uses.
+        Identifier::validate($table);
     }
 
     public function name(): string
@@ -37,11 +43,12 @@ final class DatabaseChannel implements NotificationChannel
         }
 
         $this->ensureTable();
+        $table = Identifier::validate($this->table);
         $data = $notification->toDatabase($notifiable);
 
         $stmt = $this->pdo->prepare(
-            "INSERT INTO {$this->table} (id, type, notifiable_id, data, read_at, created_at) "
-            . "VALUES (?, ?, ?, ?, NULL, ?)"
+            'INSERT INTO ' . $table . ' (id, type, notifiable_id, data, read_at, created_at) '
+            . 'VALUES (?, ?, ?, ?, NULL, ?)'
         );
         $stmt->execute([
             bin2hex(random_bytes(16)),
@@ -58,10 +65,11 @@ final class DatabaseChannel implements NotificationChannel
     public function unread(Notifiable $notifiable, int $limit = 50): array
     {
         $this->ensureTable();
+        $table = Identifier::validate($this->table);
         $stmt = $this->pdo->prepare(
-            "SELECT id, type, data, created_at FROM {$this->table} "
-            . "WHERE notifiable_id = ? AND read_at IS NULL "
-            . "ORDER BY created_at DESC LIMIT ?"
+            'SELECT id, type, data, created_at FROM ' . $table . ' '
+            . 'WHERE notifiable_id = ? AND read_at IS NULL '
+            . 'ORDER BY created_at DESC LIMIT ?'
         );
         $stmt->execute([(string) $notifiable->notifiableId(), $limit]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -75,8 +83,9 @@ final class DatabaseChannel implements NotificationChannel
     public function markAsRead(string $notificationId): void
     {
         $this->ensureTable();
+        $table = Identifier::validate($this->table);
         $stmt = $this->pdo->prepare(
-            "UPDATE {$this->table} SET read_at = ? WHERE id = ?"
+            'UPDATE ' . $table . ' SET read_at = ? WHERE id = ?'
         );
         $stmt->execute([date('Y-m-d H:i:s'), $notificationId]);
     }
@@ -84,8 +93,9 @@ final class DatabaseChannel implements NotificationChannel
     public function markAllAsRead(Notifiable $notifiable): void
     {
         $this->ensureTable();
+        $table = Identifier::validate($this->table);
         $stmt = $this->pdo->prepare(
-            "UPDATE {$this->table} SET read_at = ? WHERE notifiable_id = ? AND read_at IS NULL"
+            'UPDATE ' . $table . ' SET read_at = ? WHERE notifiable_id = ? AND read_at IS NULL'
         );
         $stmt->execute([date('Y-m-d H:i:s'), (string) $notifiable->notifiableId()]);
     }
@@ -95,16 +105,17 @@ final class DatabaseChannel implements NotificationChannel
         if ($this->tableCreated) {
             return;
         }
-        $this->pdo->exec(
-            "CREATE TABLE IF NOT EXISTS {$this->table} ("
-            . "id VARCHAR(32) NOT NULL PRIMARY KEY, "
-            . "type VARCHAR(255) NOT NULL, "
-            . "notifiable_id VARCHAR(255) NOT NULL, "
-            . "data TEXT NOT NULL, "
-            . "read_at TEXT NULL, "
-            . "created_at TEXT NOT NULL"
-            . ")"
-        );
+        $table = Identifier::validate($this->table);
+        $this->pdo->exec(TrustedDdl::mark(
+            'CREATE TABLE IF NOT EXISTS ' . $table . ' ('
+            . 'id VARCHAR(32) NOT NULL PRIMARY KEY, '
+            . 'type VARCHAR(255) NOT NULL, '
+            . 'notifiable_id VARCHAR(255) NOT NULL, '
+            . 'data TEXT NOT NULL, '
+            . 'read_at TEXT NULL, '
+            . 'created_at TEXT NOT NULL'
+            . ')'
+        ));
         $this->tableCreated = true;
     }
 }

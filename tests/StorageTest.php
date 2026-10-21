@@ -111,7 +111,7 @@ test('storage: store() rejects extensions outside the pattern', function () {
         assertThrows(
             RuntimeException::class,
             fn () => $storage->store(storageTest_upload('x'), 'up', $bad),
-            "extension \"$bad\" should be rejected",
+            "Invalid storage extension \"$bad\"",
         );
     }
 });
